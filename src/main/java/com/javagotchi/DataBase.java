@@ -45,6 +45,9 @@ public class DataBase {
             return false;
         }
     }
+    /*
+    * Closes a database connection if the connection was opened before
+     */
     public void close(){
         try {
             if (connection != null) {
