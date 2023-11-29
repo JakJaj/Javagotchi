@@ -39,11 +39,19 @@ public class DataBase {
     public boolean open(){
         try{
             connection = DriverManager.getConnection(CONNECTION_STRING);
-
             return true;
         }catch (SQLException e){
             System.out.println("Database connection failed");
             return false;
+        }
+    }
+    public void close(){
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        }catch (SQLException ex){
+            System.out.println("Something went wrong while closing the database connection");
         }
     }
 }
