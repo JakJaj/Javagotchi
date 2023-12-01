@@ -17,5 +17,19 @@ public class Character {
     private int age;
     private int happiness;
 
-    
+    public void eat(){
+
+    }
+    public void clean(){
+
+    }
+    public void sleep(){
+
+    }
+    public void play(){
+
+    }
+    public void levelUp(){
+        
+    }
 }
