@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.Random;
 
 @Getter
 @Setter
@@ -21,8 +22,25 @@ public class Character {
     private int happiness;
     private boolean sleeping;
 
+    /*
+    * Making a character eat some food
+    * If the character overeats making it sadder
+    * If character was hungry eating makes it happier
+    * There is also a 50/50 chance that a character gets a little dirty while eating
+     */
     public void eat(){
+        Random rng = new Random();
+        boolean gettingDirty = rng.nextBoolean();
+        if(gettingDirty) this.cleanliness = this.cleanliness - 10;
 
+        if(hunger + 25 > 100){
+            this.weight++;
+            this.happiness = this.happiness - 10;
+        }
+        else{
+            this.hunger = this.hunger + 25;
+            this.happiness = this.happiness + 5;
+        }
     }
     public void clean(){
     }
@@ -46,7 +64,8 @@ public class Character {
         long sleepingTime = timeElapsed.toMinutes();
         if (this.energy + sleepingTime > 100) {
             this.energy = 100;
-        } else {
+        }
+        else {
             this.energy = this.energy + (int) sleepingTime;
         }
         sleeping = false;
