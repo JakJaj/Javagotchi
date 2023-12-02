@@ -99,13 +99,16 @@ public class Character {
         }
 
         this.energy = Math.max(this.energy - 15, 0);
-        
+
         this.weight--;
         this.hunger = this.hunger - 10;
         this.cleanliness = this.cleanliness - 10;
         this.health++;
     }
+    /*
+    * Character level is going up!
+     */
     public void levelUp(){
-
+        level++;
     }
 }
