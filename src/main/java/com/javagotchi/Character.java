@@ -19,6 +19,7 @@ public class Character {
     private int energy;
     private int health;
     private int level;
+    private int experience;
     private int age;
     private int happiness;
     private boolean sleeping;
@@ -109,6 +110,13 @@ public class Character {
     * Character level is going up!
      */
     public void levelUp(){
-        level++;
+        if(experience >= 100){
+            this.level++;
+            this.experience = this.experience - 100;
+            System.out.println("LVL UP!");
+        }
+        else {
+            System.out.println("Not enough experience to level up");
+        }
     }
 }
