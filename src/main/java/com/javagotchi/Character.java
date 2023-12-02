@@ -38,10 +38,12 @@ public class Character {
         if(hunger + 25 > 100){
             this.weight++;
             this.happiness = this.happiness - 10;
+            this.hunger = 100;
         }
         else{
             this.hunger = this.hunger + 25;
             this.happiness = this.happiness + 5;
+            this.experience = this.experience + 4;
         }
     }
     /*
@@ -58,6 +60,7 @@ public class Character {
         else {
             this.cleanliness = this.cleanliness + 30;
             this.happiness = this.happiness + 10;
+            this.experience = this.experience + 3;
         }
     }
     /*
@@ -84,7 +87,8 @@ public class Character {
         else {
             this.energy = this.energy + (int) sleepingTime;
         }
-        sleeping = false;
+        this.sleeping = false;
+        this.experience = this.experience + 2;
     }
     /*
     * Playing with a character which makes it happier, hungrier, dirtier, healthier and lighter. WHAT A COMBO!
@@ -97,6 +101,7 @@ public class Character {
         }
         else {
             this.happiness = this.happiness + 10;
+            this.experience = this.experience + 5;
         }
 
         this.energy = Math.max(this.energy - 15, 0);
