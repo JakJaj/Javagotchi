@@ -42,7 +42,21 @@ public class Character {
             this.happiness = this.happiness + 5;
         }
     }
+    /*
+    * Getting character cleaner
+    * If the character is already clean enough then it maks the character sad and drains energy
+    * If the character needs a little shower then adding an appropriate value to a cleanliness value
+     */
     public void clean(){
+        if(cleanliness + 30 >= 100){
+            this.happiness = this.happiness - 10;
+            this.energy = this.energy - 10;
+            this.cleanliness = 100;
+        }
+        else {
+            this.cleanliness = this.cleanliness + 30;
+            this.happiness = this.happiness + 10;
+        }
     }
     /*
     * Getting a character to sleep.
