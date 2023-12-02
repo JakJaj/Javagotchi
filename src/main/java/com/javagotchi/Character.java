@@ -17,6 +17,7 @@ public class Character {
     private int cleanliness;
     private int weight;
     private int energy;
+    private int health;
     private int level;
     private int age;
     private int happiness;
@@ -84,8 +85,25 @@ public class Character {
         }
         sleeping = false;
     }
+    /*
+    * Playing with a character which makes it happier, hungrier, dirtier, healthier and lighter. WHAT A COMBO!
+    * When the character doesn't have enough energy for that activity it loses some health and is getting sadder because of it
+     */
     public void play(){
+        if(energy < 10){
+            this.happiness = this.happiness - 10;
+            this.health = this.health - 10;
+        }
+        else {
+            this.happiness = this.happiness + 10;
+        }
 
+        this.energy = Math.max(this.energy - 15, 0);
+        
+        this.weight--;
+        this.hunger = this.hunger - 10;
+        this.cleanliness = this.cleanliness - 10;
+        this.health++;
     }
     public void levelUp(){
 
