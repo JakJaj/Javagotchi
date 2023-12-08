@@ -43,6 +43,16 @@ class CharacterTest {
 
     @Test
     void clean() {
+        testCharacter.clean();
+        assertEquals(80,testCharacter.getCleanliness());
+        assertEquals(60,testCharacter.getHappiness());
+        assertEquals(53,testCharacter.getExperience());
+        assertEquals(50,testCharacter.getEnergy());
+        testCharacter.clean();
+        assertEquals(100,testCharacter.getCleanliness());
+        assertEquals(50,testCharacter.getHappiness());
+        assertEquals(53,testCharacter.getExperience());
+        assertEquals(40,testCharacter.getEnergy());
     }
 
     @Test
