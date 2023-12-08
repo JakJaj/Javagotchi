@@ -146,4 +146,30 @@ public class Character {
             System.out.println("Not enough experience to level up");
         }
     }
+
+    @Override
+    public String toString() {
+
+        return "Character Data\n" +
+                "---------------------------\n" +
+                "Hunger   =   " + hunger +
+                "\n---------------------------\n" +
+                "Cleanliness   =   " + cleanliness +
+                "\n---------------------------\n" +
+                "Weight   =   " + weight +
+                "\n---------------------------\n" +
+                "Energy   =   " + energy +
+                "\n---------------------------\n" +
+                "Health   =   " + health +
+                "\n---------------------------\n" +
+                "Level   =   " + level +
+                "\n---------------------------\n" +
+                "Experience   =   " + experience +
+                "\n---------------------------\n" +
+                "Age   =   " + age +
+                "\n---------------------------\n" +
+                "Happiness   =   " + happiness +
+                "\n---------------------------\n" +
+                "Sleeping   =   " + sleeping;
+    }
 }
