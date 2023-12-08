@@ -24,7 +24,21 @@ class CharacterTest {
     }
     @Test
     void eat() {
-
+        testCharacter.eat();
+        assertEquals(75,testCharacter.getHunger());
+        assertEquals(55,testCharacter.getHappiness());
+        assertEquals(54,testCharacter.getExperience());
+        assertEquals(10,testCharacter.getWeight());
+        testCharacter.eat();
+        assertEquals(100,testCharacter.getHunger());
+        assertEquals(60,testCharacter.getHappiness());
+        assertEquals(58,testCharacter.getExperience());
+        assertEquals(10,testCharacter.getWeight());
+        testCharacter.eat();
+        assertEquals(100,testCharacter.getHunger());
+        assertEquals(50,testCharacter.getHappiness());
+        assertEquals(58,testCharacter.getExperience());
+        assertEquals(11,testCharacter.getWeight());
     }
 
     @Test
