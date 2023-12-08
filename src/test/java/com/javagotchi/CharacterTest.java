@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CharacterTest {
@@ -57,6 +59,8 @@ class CharacterTest {
 
     @Test
     void sleep() {
+        LocalTime sleepStart = testCharacter.sleep();
+        assertTrue(testCharacter.isSleeping());
     }
 
     @Test
