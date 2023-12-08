@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,6 +66,13 @@ class CharacterTest {
 
     @Test
     void wakeUp() {
+        LocalTime sleepStart = testCharacter.sleep();
+        LocalTime test = sleepStart.minusMinutes(30);
+        testCharacter.wakeUp(test);
+
+        assertEquals(80,testCharacter.getEnergy());
+        assertFalse(testCharacter.isSleeping());
+        assertEquals(52,testCharacter.getExperience());
     }
 
     @Test
