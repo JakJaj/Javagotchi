@@ -64,7 +64,7 @@ public class Character {
     * If the character needs a little shower then adding an appropriate value to a cleanliness value
      */
     public void clean(){
-        if(cleanliness + 30 >= 100){
+        if(cleanliness + 30 > 100){
             this.happiness = this.happiness - 10;
             this.energy = this.energy - 10;
             this.cleanliness = 100;
