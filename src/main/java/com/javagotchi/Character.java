@@ -47,13 +47,15 @@ public class Character {
 
         if(hunger + 25 > 100){
             this.weight++;
-            this.happiness = this.happiness - 10;
+            this.happiness = Math.max(happiness - 10, 0);
+
             this.hunger = 100;
             System.out.println("Character overfed");
         }
         else{
-            this.hunger = this.hunger + 25;
-            this.happiness = this.happiness + 5;
+            this.hunger = Math.min(100,this.hunger + 25);
+            this.happiness = Math.min(100, this.happiness + 5);
+
             this.experience = this.experience + 4;
             System.out.println("Character is happy to eat");
         }
@@ -65,14 +67,15 @@ public class Character {
      */
     public void clean(){
         if(cleanliness + 30 > 100){
-            this.happiness = this.happiness - 10;
-            this.energy = this.energy - 10;
+            this.happiness = Math.max(this.happiness - 10, 0);
+            this.energy = Math.max(0,this.energy - 10);
             this.cleanliness = 100;
             System.out.println("There is no need to clean the character");
         }
         else {
-            this.cleanliness = this.cleanliness + 30;
-            this.happiness = this.happiness + 10;
+            this.cleanliness = Math.min(100,this.cleanliness + 30);
+            this.happiness = Math.min(this.happiness + 10, 100);
+
             this.experience = this.experience + 3;
             System.out.println("Character is cleaner");
         }
@@ -96,12 +99,9 @@ public class Character {
         LocalTime now = LocalTime.now();
         Duration timeElapsed = Duration.between(sleepTime, now);
         long sleepingTime = timeElapsed.toMinutes();
-        if (this.energy + sleepingTime > 100) {
-            this.energy = 100;
-        }
-        else {
-            this.energy = this.energy + (int) sleepingTime;
-        }
+
+        this.energy = Math.min(100, this.energy + (int) sleepingTime);
+
         this.sleeping = false;
         this.experience = this.experience + 2;
         System.out.println("Character woke up");
@@ -111,24 +111,26 @@ public class Character {
     * When the character doesn't have enough energy for that activity it loses some health and is getting sadder because of it
      */
     public void play(){
-        if(energy < 10){
-            this.happiness = this.happiness - 10;
-            this.health = this.health - 10;
+        if(energy <= 10){
+            this.happiness = Math.max(0, this.happiness - 10);
+            this.health = Math.max(0, this.health - 10);
+
+            this.weight--;
             System.out.println("Character is too tired");
             System.out.println("Don't force it to play");
         }
         else {
-            this.happiness = this.happiness + 10;
+
+            this.happiness = Math.min(100, this.happiness + 10);
+            this.health++;
             this.experience = this.experience + 5;
             System.out.println("Character is playing a game");
         }
 
         this.energy = Math.max(this.energy - 15, 0);
+        this.hunger = Math.max(0,this.hunger - 10);
+        this.cleanliness = Math.max(0, this.cleanliness - 10);
 
-        this.weight--;
-        this.hunger = this.hunger - 10;
-        this.cleanliness = this.cleanliness - 10;
-        this.health++;
     }
     /**
     * Character level is going up. Only when the experience level is above 100
