@@ -113,5 +113,16 @@ class CharacterTest {
 
     @Test
     void levelUp() {
+        testCharacter.levelUp();
+        assertEquals(10,testCharacter.getLevel());
+        assertEquals(50,testCharacter.getExperience());
+        testCharacter.setExperience(103);
+        testCharacter.levelUp();
+        assertEquals(11,testCharacter.getLevel());
+        assertEquals(3, testCharacter.getExperience());
+        testCharacter.setExperience(100);
+        testCharacter.levelUp();
+        assertEquals(12,testCharacter.getLevel());
+        assertEquals(0,testCharacter.getExperience());
     }
 }
