@@ -6,11 +6,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.geometry.*; // pos only prob?
-
-
 import java.io.IOException;
-
+import java.io.InputStream;
 
 public class Main extends Application {
     @Override
@@ -18,45 +17,66 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
 
+        String containerBackground = "-fx-background-color: #44394d;";// it should go to fxml file
         Pane topSection = new Pane();
         topSection.setPrefSize(800, 150);
-        topSection.setStyle("-fx-background-color: #FF0000;"); //red
+        topSection.setStyle(containerBackground);
 
         Pane bottomSection = new Pane();
         bottomSection.setPrefSize(800, 150);
-        bottomSection.setStyle("-fx-background-color: #00FF00;"); //green
+        bottomSection.setStyle(containerBackground);
 
         Pane centerSection = new Pane();
         centerSection.setPrefSize(800, 300);
-        centerSection.setStyle("-fx-background-color: #0000FF;"); //blue
 
+        // Load image as background
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream("background.jpg");
+        if (is == null) {
+            System.out.println("Error: image not found");
+            System.exit(1);
+        }
+        BackgroundImage backgroundImage = new BackgroundImage(
+                new Image(is), // Image by pikisuperstar on Freepik "https://www.freepik.com/free-vector/pixel-art-mystical-background_29019077.htm#query=pixel%20art&position=0&from_view=keyword&track=ais&uuid=623d5b35-1c83-4891-bd52-b617b3a15dac"
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT
+        );
+        centerSection.setBackground(new Background(backgroundImage));
 
         VBox root = new VBox(topSection, centerSection, bottomSection);
         scene.setRoot(root);
 
-        Button button1 = new Button("Eat");
-        Button button2 = new Button("Play");
-        Button button3 = new Button("Clea");
-        Button button4 = new Button("Sleep");
+        Button button1 = new Button("EAT");
+        Button button2 = new Button("PLAY");
+        Button button3 = new Button("CLEAN");
+        Button button4 = new Button("SLEEP");
 
-        button1.setPrefSize(150, 100);
-        button2.setPrefSize(150, 100);
-        button3.setPrefSize(150, 100);
-        button4.setPrefSize(150, 100);
+        button1.setPrefSize(120, 60);
+        button2.setPrefSize(120, 60);
+        button3.setPrefSize(120, 60);
+        button4.setPrefSize(120, 60);
+
+        String buttonStyle = "-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"; // it should go to fxml file
+        button1.setStyle(buttonStyle);
+        button2.setStyle(buttonStyle);
+        button3.setStyle(buttonStyle);
+        button4.setStyle(buttonStyle);
 
         HBox buttonContainer = new HBox(button1, button2, button3, button4);
-        buttonContainer.setSpacing(10);
+        buttonContainer.setSpacing(30);
         buttonContainer.setAlignment(Pos.CENTER);
 
-        double totalButtonWidth = (button1.getPrefWidth() + button2.getPrefWidth() + button3.getPrefWidth() + button4.getPrefWidth()) + (buttonContainer.getSpacing() * 3); //padding calc
+        double totalButtonWidth = (button1.getPrefWidth() + button2.getPrefWidth() + button3.getPrefWidth() + button4.getPrefWidth()) + (buttonContainer.getSpacing() * 3); // padding calc
         double padding = (800 - totalButtonWidth) / 2;
         buttonContainer.setPadding(new Insets(0, padding, 0, padding));
-
-        bottomSection.getChildren().add(buttonContainer);
+        buttonContainer.layoutYProperty().bind(bottomSection.heightProperty().subtract(buttonContainer.heightProperty()).divide(2));
+        bottomSection.getChildren().add(buttonContainer);        
 
         stage.setTitle("Welcome to Javagotchi!");
         stage.setScene(scene);
-        stage.setResizable(false); //block window resizing from users
+        stage.setResizable(false); // Block window resizing from users
         stage.show();
     }
 
