@@ -1,8 +1,8 @@
 package com.javagotchi;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Class that contains all methods that are needed for a database usage for
@@ -66,7 +66,8 @@ public class DataBase {
     public static final int INDEX_CHARACTER_SLEEPING = 11;
     /** Index of the last_usage_time column*/
     public static final int INDEX_CHARACTER_LAST_USAGE_TIME = 12;
-
+    /** Date format*/
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     /**
     * Opens a database connection
     *
@@ -92,5 +93,54 @@ public class DataBase {
         }catch (SQLException ex){
             System.out.println("Something went wrong while closing the database connection");
         }
+    }
+    /** Method that gets the latest information about the character from a database,
+     * creates a character object and sets characters values based on a values from a database
+     * If a database has no information about a character then a based character is created and returned
+     *
+     * @return      Character object containing information saved to the database if this doesn't exist then returns a values for the new character
+     * */
+    public Character getLatestCharacterData(){
+        String query = "SELECT * FROM " + TABLE_CHARACTER + " ORDER BY " + COLUMN_ID + " DESC LIMIT 1";
+        Character character = new Character();
+
+        try(Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query)){
+
+            if(resultSet.next()) { //data about previous game exists
+                character.setHunger(resultSet.getInt(INDEX_CHARACTER_HUNGER));
+                character.setCleanliness(resultSet.getInt(INDEX_CHARACTER_CLEANLINESS));
+                character.setWeight(resultSet.getInt(INDEX_CHARACTER_WEIGHT));
+                character.setEnergy(resultSet.getInt(INDEX_CHARACTER_ENERGY));
+                character.setHealth(resultSet.getInt(INDEX_CHARACTER_HEALTH));
+                character.setLevel(resultSet.getInt(INDEX_CHARACTER_LEVEL));
+                character.setExperience(resultSet.getInt(INDEX_CHARACTER_EXPERIENCE));
+                character.setAge(resultSet.getInt(INDEX_CHARACTER_AGE));
+                character.setHappiness(resultSet.getInt(INDEX_CHARACTER_HAPPINESS));
+                character.setSleeping((resultSet.getInt(INDEX_CHARACTER_SLEEPING) == 1 )); //if the character was sleeping the value is 1
+
+                if(character.isSleeping()){
+                    String lastUsage = resultSet.getString(INDEX_CHARACTER_LAST_USAGE_TIME);
+                    LocalTime sleepTime = LocalTime.parse(lastUsage,formatter);
+                    character.wakeUp(sleepTime);
+                }
+            }
+            else { //this is a first time a player is playing the game
+                character.setHunger(100);
+                character.setCleanliness(100);
+                character.setWeight(50);
+                character.setEnergy(100);
+                character.setHealth(100);
+                character.setLevel(1);
+                character.setExperience(0);
+                character.setAge(0);
+                character.setHappiness(100);
+                character.setSleeping(false);
+            }
+        }catch (SQLException e ){
+            System.out.println("An error occurred while getting the latest data " + e.getMessage());
+        }
+
+        return character;
     }
 }
