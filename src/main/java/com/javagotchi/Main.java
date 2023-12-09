@@ -64,6 +64,12 @@ public class Main extends Application {
         button3.setStyle(buttonStyle);
         button4.setStyle(buttonStyle);
 
+        // Button press event handlers
+        button1.setOnAction(e -> System.out.println("EAT"));
+        button2.setOnAction(e -> System.out.println("PLAY"));
+        button3.setOnAction(e -> System.out.println("CLEAN"));
+        button4.setOnAction(e -> System.out.println("SLEEP"));
+
         HBox buttonContainer = new HBox(button1, button2, button3, button4);
         buttonContainer.setSpacing(30);
         buttonContainer.setAlignment(Pos.CENTER);
