@@ -1,6 +1,7 @@
 package com.javagotchi;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -68,6 +69,12 @@ public class DataBase {
     public static final int INDEX_CHARACTER_LAST_USAGE_TIME = 12;
     /** Date format*/
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+    private PreparedStatement insertIntoCharacter;
+    public static final String INSERT_CHARACTER = "INSERT INTO " + TABLE_CHARACTER +
+            " (" + COLUMN_HUNGER + ", " + COLUMN_CLEANLINESS + ", " + COLUMN_WEIGHT + ", " + COLUMN_ENERGY + ", " +
+            COLUMN_HEALTH  + ", " + COLUMN_LEVEL + ", " + COLUMN_EXPERIENCE + ", " + COLUMN_AGE + ", " + COLUMN_HAPPINESS +
+            ", " + COLUMN_SLEEPING + ", " + COLUMN_LAST_USAGE_TIME + ") " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     /**
     * Opens a database connection
     *
@@ -76,9 +83,11 @@ public class DataBase {
     public boolean open(){
         try{
             connection = DriverManager.getConnection(CONNECTION_STRING);
+            insertIntoCharacter = connection.prepareStatement(INSERT_CHARACTER);
+            System.out.println("Database connection opened successfully");
             return true;
         }catch (SQLException e){
-            System.out.println("Database connection failed");
+            System.out.println("Database connection failed " + e.getMessage());
             return false;
         }
     }
@@ -89,6 +98,9 @@ public class DataBase {
         try {
             if (connection != null) {
                 connection.close();
+            }
+            if(insertIntoCharacter != null){
+                insertIntoCharacter.close();
             }
         }catch (SQLException ex){
             System.out.println("Something went wrong while closing the database connection");
@@ -140,7 +152,50 @@ public class DataBase {
         }catch (SQLException e ){
             System.out.println("An error occurred while getting the latest data " + e.getMessage());
         }
-
         return character;
+    }
+    /** Method that inserts a data from a character and adds a new entry to the database
+     * @param       character a Character object that is current game character
+     */
+    public void insertNewestData(Character character){
+        int sleeping = 0;
+        LocalDateTime timeNow = LocalDateTime.now();
+        try {
+            connection.setAutoCommit(false);
+
+            insertIntoCharacter.setInt(1, character.getHunger());
+            insertIntoCharacter.setInt(2, character.getCleanliness());
+            insertIntoCharacter.setInt(3, character.getWeight());
+            insertIntoCharacter.setInt(4, character.getEnergy());
+            insertIntoCharacter.setInt(5, character.getHealth());
+            insertIntoCharacter.setInt(6, character.getLevel());
+            insertIntoCharacter.setInt(7, character.getExperience());
+            insertIntoCharacter.setInt(8, character.getAge());
+            insertIntoCharacter.setInt(9, character.getHappiness());
+            if(character.isSleeping()) sleeping = 1;
+            insertIntoCharacter.setInt(10, sleeping);
+            insertIntoCharacter.setString(11,  timeNow.format(formatter));
+
+            insertIntoCharacter.executeUpdate();
+            connection.commit();
+
+        }catch (SQLException e){
+            System.out.println("Something went wrong while inserting data");
+            try{
+                System.out.println("Performing a rollback");
+                connection.rollback();
+            }catch (SQLException ex){
+                System.out.println("Its kind of impossible to be here and there is nothing we can do");
+                System.out.println(e.getMessage());
+            }
+        }finally {
+            try{
+                System.out.println("Reseting commit default behaviour");
+                connection.setAutoCommit(true);
+            }catch (SQLException e){
+                System.out.println("Couldn't reset commit behaviour");
+            }
+
+        }
     }
 }
