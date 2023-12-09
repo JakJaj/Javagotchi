@@ -1,5 +1,7 @@
 package com.javagotchi;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.geometry.*; // pos only prob?
 import java.io.IOException;
 import java.io.InputStream;
+import javafx.util.Duration;
 
 public class Main extends Application {
     @Override
@@ -84,6 +87,13 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(false); // Block window resizing from users
         stage.show();
+
+        
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
+            stage.setScene(scene); // Refreshing scene every 10 seconds (mainly for top bars)
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
     public static void main(String[] args) {
