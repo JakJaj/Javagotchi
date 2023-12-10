@@ -133,8 +133,8 @@ public class DataBase {
 
                 if(character.isSleeping()){
                     String lastUsage = resultSet.getString(INDEX_CHARACTER_LAST_USAGE_TIME);
-                    LocalTime sleepTime = LocalTime.parse(lastUsage,formatter);
-                    character.wakeUp(sleepTime);
+                    character.setBedTime(LocalTime.parse(lastUsage,formatter));
+                    character.wakeUp();
                 }
             }
             else { //this is a first time a player is playing the game

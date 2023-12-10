@@ -33,6 +33,7 @@ public class Character {
     private int happiness;
     /** Character's sleeping flag*/
     private boolean sleeping;
+    private LocalTime bedTime;
 
     /**
     * Making a character eat some food
@@ -83,21 +84,20 @@ public class Character {
     /**
     * Getting a character to sleep.
     * Setting sleeping field to false and saving a time when a character went to sleep
-    * @return       LocalTime of a moment when a character went to sleep
      */
-    public LocalTime sleep(){
+    public void sleep(){
         this.sleeping = true;
+        this.bedTime = LocalTime.now();
         System.out.println("Character is going to sleep");
-        return LocalTime.now();
     }
     /**
     * Waking up a character from a sleep, and making character's go up according to the amount of minutes that elapsed from character going to sleep.
     * Setting a sleeping field to false
-    * @param       sleepTime localTime of a moment when a character went to sleep
      */
-    public void wakeUp(LocalTime sleepTime) {
+    public void wakeUp() {
         LocalTime now = LocalTime.now();
-        Duration timeElapsed = Duration.between(sleepTime, now);
+
+        Duration timeElapsed = Duration.between(getBedTime(), now);
         long sleepingTime = timeElapsed.toMinutes();
 
         this.energy = Math.min(100, this.energy + (int) sleepingTime);
