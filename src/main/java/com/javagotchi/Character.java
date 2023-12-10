@@ -44,7 +44,7 @@ public class Character {
     public void eat(){
         Random rng = new Random();
         boolean gettingDirty = rng.nextBoolean();
-        if(gettingDirty) this.cleanliness = this.cleanliness - 10;
+        if(gettingDirty) this.cleanliness = Math.max(0,this.cleanliness - 10);
 
         if(hunger + 25 > 100){
             this.weight++;
