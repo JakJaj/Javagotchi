@@ -67,7 +67,7 @@ class CharacterTest {
     @Test
     void wakeUp() {
         testCharacter.sleep();
-        testCharacter.setBedTime( testCharacter.getBedTime().minusMinutes(30));
+        testCharacter.setBedTime(testCharacter.getBedTime().minusMinutes(30));
         testCharacter.wakeUp();
 
         assertEquals(80,testCharacter.getEnergy());

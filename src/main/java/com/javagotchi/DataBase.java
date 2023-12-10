@@ -1,9 +1,11 @@
 package com.javagotchi;
 
 import java.sql.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class that contains all methods that are needed for a database usage for
@@ -69,6 +71,7 @@ public class DataBase {
     public static final int INDEX_CHARACTER_LAST_USAGE_TIME = 12;
     /** Date format*/
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
     private PreparedStatement insertIntoCharacter;
     public static final String INSERT_CHARACTER = "INSERT INTO " + TABLE_CHARACTER +
             " (" + COLUMN_HUNGER + ", " + COLUMN_CLEANLINESS + ", " + COLUMN_WEIGHT + ", " + COLUMN_ENERGY + ", " +
@@ -120,6 +123,10 @@ public class DataBase {
             ResultSet resultSet = statement.executeQuery(query)){
 
             if(resultSet.next()) { //data about previous game exists
+                String lastUsage = resultSet.getString(INDEX_CHARACTER_LAST_USAGE_TIME);
+                LocalDateTime lastUsageDay = LocalDateTime.parse(lastUsage,formatter);
+                Duration timeElapsed = Duration.between(lastUsageDay,LocalDateTime.now());
+
                 character.setHunger(resultSet.getInt(INDEX_CHARACTER_HUNGER));
                 character.setCleanliness(resultSet.getInt(INDEX_CHARACTER_CLEANLINESS));
                 character.setWeight(resultSet.getInt(INDEX_CHARACTER_WEIGHT));
@@ -127,12 +134,13 @@ public class DataBase {
                 character.setHealth(resultSet.getInt(INDEX_CHARACTER_HEALTH));
                 character.setLevel(resultSet.getInt(INDEX_CHARACTER_LEVEL));
                 character.setExperience(resultSet.getInt(INDEX_CHARACTER_EXPERIENCE));
-                character.setAge(resultSet.getInt(INDEX_CHARACTER_AGE));
+
+                character.setAge((int) (resultSet.getInt(INDEX_CHARACTER_AGE) + timeElapsed.toDays()));
                 character.setHappiness(resultSet.getInt(INDEX_CHARACTER_HAPPINESS));
                 character.setSleeping((resultSet.getInt(INDEX_CHARACTER_SLEEPING) == 1 )); //if the character was sleeping the value is 1
 
                 if(character.isSleeping()){
-                    String lastUsage = resultSet.getString(INDEX_CHARACTER_LAST_USAGE_TIME);
+
                     character.setBedTime(LocalTime.parse(lastUsage,formatter));
                     character.wakeUp();
                 }

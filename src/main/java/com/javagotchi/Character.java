@@ -99,9 +99,8 @@ public class Character {
 
         Duration timeElapsed = Duration.between(getBedTime(), now);
         long sleepingTime = timeElapsed.toMinutes();
-
-        this.energy = Math.min(100, this.energy + (int) sleepingTime);
-
+        if(this.energy + (int) sleepingTime > 100) this.energy = Math.min(100, this.energy + (int) sleepingTime);
+        else this.energy = this.energy + (int) sleepingTime;
         this.sleeping = false;
         this.experience = this.experience + 2;
         System.out.println("Character woke up");
@@ -170,6 +169,8 @@ public class Character {
                 "\n---------------------------\n" +
                 "Happiness   =   " + happiness +
                 "\n---------------------------\n" +
-                "Sleeping   =   " + sleeping;
+                "Sleeping   =   " + sleeping +
+                "\n---------------------------\n" +
+                "BedTime   =   " + bedTime;
     }
 }
