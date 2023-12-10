@@ -60,15 +60,15 @@ class CharacterTest {
 
     @Test
     void sleep() {
-        LocalTime sleepStart = testCharacter.sleep();
+        testCharacter.sleep();
         assertTrue(testCharacter.isSleeping());
     }
 
     @Test
     void wakeUp() {
-        LocalTime sleepStart = testCharacter.sleep();
-        LocalTime test = sleepStart.minusMinutes(30);
-        testCharacter.wakeUp(test);
+        testCharacter.sleep();
+        testCharacter.setBedTime(testCharacter.getBedTime().minusMinutes(30));
+        testCharacter.wakeUp();
 
         assertEquals(80,testCharacter.getEnergy());
         assertFalse(testCharacter.isSleeping());
