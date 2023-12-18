@@ -25,7 +25,6 @@ public class Main extends Application {
     private Label cleanlinessLabel;
     private Label happinessLabel;
     private Label energyLabel;
-    private LocalTime bedtime;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -140,11 +139,10 @@ public class Main extends Application {
         });
         buttonSleep.setOnAction(e -> {
             if (character.isSleeping()){
-                character.wakeUp(bedtime);
+                character.wakeUp();
                 buttonSleep.setText("SLEEP");
                 System.out.println("THEY WOKE UP");}
             else{
-                bedtime = character.sleep();
                 buttonSleep.setText("WAKE UP");
                 System.out.println("SLEEPY EPPY :3");}
             updateLabels();
