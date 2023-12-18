@@ -158,7 +158,7 @@ public class Main extends Application {
         buttonContainer.layoutYProperty().bind(bottomSection.heightProperty().subtract(buttonContainer.heightProperty()).divide(2));
         bottomSection.getChildren().add(buttonContainer);
 
-        stage.setTitle("Welcome to Javagotchi!");
+        stage.setTitle("Javagotchi");
         stage.setScene(scene);
         stage.setResizable(false); // Block window resizing from users
         stage.show();
