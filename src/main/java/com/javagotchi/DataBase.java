@@ -5,7 +5,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class that contains all methods that are needed for a database usage for
@@ -62,7 +61,6 @@ public class DataBase {
     public static final int INDEX_CHARACTER_EXPERIENCE = 8;
     /** Index of the age column */
     public static final int INDEX_CHARACTER_AGE = 9;
-
     /** Index of the happiness column*/
     public static final int INDEX_CHARACTER_HAPPINESS = 10;
     /** Index of the sleeping column*/
@@ -71,13 +69,31 @@ public class DataBase {
     public static final int INDEX_CHARACTER_LAST_USAGE_TIME = 12;
     /** Date format*/
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-
+    private static DataBase dataBase;
     private PreparedStatement insertIntoCharacter;
     public static final String INSERT_CHARACTER = "INSERT INTO " + TABLE_CHARACTER +
             " (" + COLUMN_HUNGER + ", " + COLUMN_CLEANLINESS + ", " + COLUMN_WEIGHT + ", " + COLUMN_ENERGY + ", " +
             COLUMN_HEALTH  + ", " + COLUMN_LEVEL + ", " + COLUMN_EXPERIENCE + ", " + COLUMN_AGE + ", " + COLUMN_HAPPINESS +
             ", " + COLUMN_SLEEPING + ", " + COLUMN_LAST_USAGE_TIME + ") " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    /**
+     * Private constructor so that its impossible to create an instance of this class using the "new" keyword
+     * Use getInstance method to get an instance
+     */
+    private DataBase(){}
+    /**
+     * The only one method to get an instance of a database.
+     *
+     * @return If the instance already exists then the code returns an existing one
+     * otherwise this method returns a newly created instance of a database
+     */
+    public static DataBase getInstance(){
+        if (dataBase == null){
+            dataBase = new DataBase();
+        }
+        return dataBase;
+    }
     /**
     * Opens a database connection
     *

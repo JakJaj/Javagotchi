@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 
 public class MainController {
     /** Database variable*/
-    DataBase dataBase = new DataBase();
+    DataBase dataBase = DataBase.getInstance();
     /** Character variable */
     Character character;
     /** Method that is run when the application is starting*/
