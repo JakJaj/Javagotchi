@@ -10,7 +10,6 @@ import java.util.Random;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class Character {
 
     /** Character's Hunger level*/
@@ -34,7 +33,17 @@ public class Character {
     /** Character's sleeping flag*/
     private boolean sleeping;
     private LocalTime bedTime;
+    public static Character character;
 
+    private Character() {}
+
+    public static Character getInstance(){
+        if(character == null){
+            character = new Character();
+        }
+
+        return character;
+    }
     /**
     * Making a character eat some food
     * If the character overeats making it sadder
