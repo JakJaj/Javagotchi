@@ -1,7 +1,6 @@
 package com.javagotchi;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Duration;
@@ -32,11 +31,21 @@ public class Character {
     private int happiness;
     /** Character's sleeping flag*/
     private boolean sleeping;
+    /** The time when character went to sleep*/
     private LocalTime bedTime;
+    /** Static and only instance of a Character class*/
     public static Character character;
-
+    /**
+     * Private constructor so that its impossible to create an instance of this class using the "new" keyword
+     * Use getInstance method to get an instance
+     */
     private Character() {}
-
+    /**
+     * The only one method to get an instance of a Character instance.
+     *
+     * @return If the instance already exists then the code returns an existing one
+     * otherwise this method returns a newly created instance of a character
+     */
     public static Character getInstance(){
         if(character == null){
             character = new Character();
