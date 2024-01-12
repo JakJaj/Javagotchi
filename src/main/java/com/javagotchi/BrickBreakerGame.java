@@ -29,9 +29,7 @@ public class BrickBreakerGame extends Application {
     private Pane root;
     private Rectangle paddle;
     private Circle ball;
-    private Line roof;
-    private Rectangle roofBackground;
-    private Character character = new Character();
+    private final Character character = Character.getInstance();
     private Label levelLabel;
     private Label ageLabel;
     private Label healthLabel;
@@ -40,6 +38,7 @@ public class BrickBreakerGame extends Application {
     private Label happinessLabel;
     private Label energyLabel;
     private Label experienceLabel;
+    private Rectangle roofBackground;
     private double ballSpeedX = 0;
     private double ballSpeedY = 0;
     private boolean gameOver = false;
@@ -78,11 +77,11 @@ public class BrickBreakerGame extends Application {
                 }
             }
         });
-
         timeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             if (!gameOver) {
                 moveBall();
                 checkCollision();
+                updateLabels();
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -92,15 +91,15 @@ public class BrickBreakerGame extends Application {
         primaryStage.show();
 
         checkGameStart(primaryStage);
-        checkGameOver(primaryStage);
         checkGameComplete(primaryStage);
+        checkGameOver(primaryStage);
     }
     /**
      * Creates a paddle object and adds it to the root pane.
      * The paddle is positioned at the bottom center of the screen.
      */
     private void createPaddle() {
-        paddle = new Rectangle(WIDTH / 2 - PADDLE_WIDTH / 2, HEIGHT - PADDLE_HEIGHT - 40, PADDLE_WIDTH, PADDLE_HEIGHT);
+        paddle = new Rectangle((double) WIDTH / 2 - (double) PADDLE_WIDTH / 2, HEIGHT - PADDLE_HEIGHT - 40, PADDLE_WIDTH, PADDLE_HEIGHT);
         paddle.setFill(Color.BLUE);
         root.getChildren().add(paddle);
     }
@@ -108,7 +107,7 @@ public class BrickBreakerGame extends Application {
      * Creates a new ball and adds it to the root pane.
      */
     private void createBall() {
-        ball = new Circle(WIDTH / 2, HEIGHT / 2, BALL_RADIUS, Color.RED);
+        ball = new Circle((double) WIDTH / 2, (double) HEIGHT / 2, BALL_RADIUS, Color.RED);
         root.getChildren().add(ball);
     }
     /**
@@ -141,7 +140,7 @@ public class BrickBreakerGame extends Application {
         scoreLabel = new Label("Score: 0");
         scoreLabel.setFont(new Font(16));
         scoreLabel.setTextFill(Color.WHITE);
-        scoreLabel.setLayoutX(WIDTH / 2 - 45);
+        scoreLabel.setLayoutX((double) WIDTH / 2 - 45);
         scoreLabel.setLayoutY(10);
         root.getChildren().add(scoreLabel);
     }
@@ -170,16 +169,16 @@ public class BrickBreakerGame extends Application {
         hungerLabel.setLayoutX(10);
         hungerLabel.setLayoutY(55);
         hungerLabel.setTextFill(Color.WHITE);
-        cleanlinessLabel.setLayoutX(300);
+        cleanlinessLabel.setLayoutX(285);
         cleanlinessLabel.setLayoutY(10);
         cleanlinessLabel.setTextFill(Color.WHITE);
-        happinessLabel.setLayoutX(300);
+        happinessLabel.setLayoutX(285);
         happinessLabel.setLayoutY(25);
         happinessLabel.setTextFill(Color.WHITE);
-        energyLabel.setLayoutX(300);
+        energyLabel.setLayoutX(285);
         energyLabel.setLayoutY(40);
         energyLabel.setTextFill(Color.WHITE);
-        ageLabel.setLayoutX(300);
+        ageLabel.setLayoutX(285);
         ageLabel.setLayoutY(55);
         ageLabel.setTextFill(Color.WHITE);
         root.getChildren().addAll(levelLabel, ageLabel, experienceLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel);
@@ -189,12 +188,11 @@ public class BrickBreakerGame extends Application {
      */
     private void createRoof() {
         roofBackground = new Rectangle(0, 0, WIDTH, 80);
-        roofBackground.setFill(Color.GRAY);
+        roofBackground.setFill(Color.web("#44394d"));
         root.getChildren().add(roofBackground);
-        roof = new Line(0, 80, WIDTH, 80);
+        Line roof = new Line(0, 80, WIDTH, 80);
         roof.setFill(Color.BLACK);
         root.getChildren().add(roof);
-
     }
     /**
      * Moves the paddle to the left by 20 units, if it is not already at the leftmost position.
@@ -234,31 +232,79 @@ public class BrickBreakerGame extends Application {
             ballSpeedX = 0;
             System.out.println("Game Over");
             gameOver = true;
-
         }
     }
     /**
      * Checks for collision between the ball and the paddle, as well as the ball and the bricks.
      * If a collision is detected with the paddle, the ball's vertical speed is reversed.
-     * If a collision is detected with a brick, the brick is removed from the scene, the ball's vertical speed is reversed,
-     * the score is incremented, and the score is updated.
+     * If a collision is detected with a brick, the brick is removed from the scene, the ball's vertical speed reverse,
+     * the score increments, and the score updates.
      */
     private void checkCollision() {
         if (ball.getBoundsInParent().intersects(paddle.getBoundsInParent())) {
-            ballSpeedY *= -1;
+            double paddleWidthSegment = PADDLE_WIDTH / 5.0;
+            double paddleX = paddle.getX();
+
+            // Determine which subpart of the paddle the ball hits
+            double relativeCollisionX = ball.getCenterX() - (paddleX + paddleWidthSegment / 2);
+            int subpart = (int) (relativeCollisionX / paddleWidthSegment) + 2; // Offset to center
+
+            // Adjust bounce angle based on subpart
+            double bounceFactor = 1.0; // Default bounce factor
+            if (subpart > 0 && subpart < 6) {
+                bounceFactor = 1.0 + (Math.abs(subpart - 3) * 0.1); // Adjust the factor as needed
+            }
+
+            ballSpeedY *= -1 * bounceFactor; // Adjust bounce angle
+            normalizeBallSpeed(); // Keep ball speed constant
         }
+
         for (javafx.scene.Node node : root.getChildren()) {
-            if (node instanceof Rectangle && node != paddle) {
-                Rectangle brick = (Rectangle) node;
+            if (node instanceof Rectangle brick && node != paddle && node != roofBackground) {
                 if (ball.getBoundsInParent().intersects(brick.getBoundsInParent())) {
                     root.getChildren().remove(brick);
-                    ballSpeedY *= -1;
+
+                    double ballCenterX = ball.getCenterX();
+                    double ballCenterY = ball.getCenterY();
+                    double brickLeft = brick.getX();
+                    double brickRight = brick.getX() + BRICK_WIDTH;
+                    double brickTop = brick.getY();
+                    double brickBottom = brick.getY() + BRICK_HEIGHT;
+
+                    if (ballCenterX >= brickLeft && ballCenterX <= brickRight) {
+                        // Collision with top or bottom of the brick
+                        if (ballCenterY <= brickTop || ballCenterY >= brickBottom) {
+                            ballSpeedY *= -1;
+                        }
+                    } else if (ballCenterY >= brickTop && ballCenterY <= brickBottom) {
+                        // Collision with sides of the brick
+                        ballSpeedX *= -1;
+                    }
+
                     score++;
                     updateScore();
                     break;
                 }
             }
         }
+    }
+    /**
+     * Normalizes the speed of the ball.
+     * If the current speed is greater than 2, the ball's speed is scaled down to 2.
+     * The ball's speed components are then clamped between -2 and 2.
+     */
+    private void normalizeBallSpeed() {
+        double currentSpeed = Math.sqrt(ballSpeedX * ballSpeedX + ballSpeedY * ballSpeedY);
+
+        if (currentSpeed > 2) {
+            double scale = 2 / currentSpeed;
+            ballSpeedX *= scale;
+            ballSpeedY *= scale;
+        }
+
+        // Ensure that the components are either -1.5 or 1.5
+        ballSpeedX = Math.min(2, Math.max(-2, ballSpeedX));
+        ballSpeedY = Math.min(2, Math.max(-2, ballSpeedY));
     }
     /**
      * Updates the score label with the current score.
@@ -288,13 +334,14 @@ public class BrickBreakerGame extends Application {
     private void checkGameOver(Stage primaryStage) {
         Timeline gameOverTimeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             if (gameOver) {
-                //TODO:PLAY METHOD FROM CHARACTER!
                 updateLabels();
                 displayGameOver(primaryStage);
             }
+
         }));
         gameOverTimeline.setCycleCount(Timeline.INDEFINITE);
         gameOverTimeline.play();
+
     }
     /**
      * Checks if the game has started and updates the labels accordingly.
@@ -320,7 +367,6 @@ public class BrickBreakerGame extends Application {
     private void checkGameComplete(Stage primaryStage) {
         Timeline gameCompleteTimeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             if (score == 30) {
-                //TODO:PLAY METHOD FROM CHARACTER!
                 ballSpeedY = 0;
                 ballSpeedX = 0;
                 updateLabels();
@@ -329,6 +375,7 @@ public class BrickBreakerGame extends Application {
         }));
         gameCompleteTimeline.setCycleCount(Timeline.INDEFINITE);
         gameCompleteTimeline.play();
+
     }
     /**
      * Displays the game over screen with the given stage.
@@ -362,13 +409,14 @@ public class BrickBreakerGame extends Application {
 
         root.getScene().setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                character.play(score);
                 primaryStage.close();
             } else if (keyEvent.getCode() == KeyCode.SPACE) {
+                character.play(score);
                 restartGame();
                 timeline.stop();
                 primaryStage.close();
                 start(new Stage());
-
             }
         });
         root.getChildren().addAll(gameOverText, pressEnterToQuit, pressSpaceToTryAgain, yourScoreWas);
@@ -418,6 +466,7 @@ public class BrickBreakerGame extends Application {
      * @param primaryStage the primary stage of the JavaFX application
      */
     private void displayGameComplete(Stage primaryStage) {
+
         Text gameCompleteText = new Text("Game\nCompleted!");
         gameCompleteText.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
         gameCompleteText.setFont(new Font(60));
@@ -439,8 +488,10 @@ public class BrickBreakerGame extends Application {
 
         root.getScene().setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                character.play(score);
                 primaryStage.close();
             } else if (keyEvent.getCode() == KeyCode.SPACE) {
+                character.play(score);
                 restartGame();
                 timeline.stop();
                 primaryStage.close();
@@ -448,7 +499,6 @@ public class BrickBreakerGame extends Application {
                 start(new Stage());
             }
         });
-
         root.getChildren().addAll(gameCompleteText, pressEnterToQuit, pressSpaceToTryAgain);
     }
     /**
