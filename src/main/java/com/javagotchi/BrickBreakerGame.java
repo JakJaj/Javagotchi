@@ -6,11 +6,13 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -19,18 +21,24 @@ import javafx.util.Duration;
 
 public class BrickBreakerGame extends Application {
 
-    private static final int WIDTH = 400;
+    private static final int WIDTH = 380;
     private static final int HEIGHT = 600;
     private static final int PADDLE_WIDTH = 60;
     private static final int PADDLE_HEIGHT = 10;
     private static final int BALL_RADIUS = 5;
-
+    public static final int NUM_BRICKS_HORIZONTAL = 6;
+    public static final int NUM_BRICKS_VERTICAL = 5;
+    private static final int BRICK_WIDTH = 55;
+    private static final int BRICK_HEIGHT = 20;
     private Pane root;
     private Rectangle paddle;
     private Circle ball;
+    private Line roof;
     private double ballSpeedX = -1.5;
     private double ballSpeedY = -1.5;
     private boolean gameOver = false;
+    private int score = 0;
+    private Label scoreLabel;
     Timeline timeline;
     public static void main(String[] args) {
         launch(args);
@@ -45,7 +53,8 @@ public class BrickBreakerGame extends Application {
         createPaddle();
         createBall();
         createBricks();
-
+        createRoof();
+        createScoreLabel();
         scene.setOnKeyPressed(e -> {
             if(!gameOver) {
                 if (e.getCode() == KeyCode.LEFT) {
@@ -83,9 +92,28 @@ public class BrickBreakerGame extends Application {
     }
 
     private void createBricks() {
-        // Create bricks here and add them to the root pane
-    }
+        int horizontalGap = 10; // Adjust the horizontal gap
+        int verticalGap = 5;    // Adjust the vertical gap
+        int brickOffsetY = 80;
 
+        for (int i = 0; i < NUM_BRICKS_HORIZONTAL; i++) {
+            for (int j = 0; j < NUM_BRICKS_VERTICAL; j++) {
+                double x = i * (BRICK_WIDTH + horizontalGap);
+                double y = j * (BRICK_HEIGHT + verticalGap) + brickOffsetY;
+
+                Rectangle brick = new Rectangle(x, y, BRICK_WIDTH, BRICK_HEIGHT);
+                brick.setFill(Color.PURPLE);
+                root.getChildren().add(brick);
+            }
+        }
+    }
+    private void createScoreLabel() {
+        scoreLabel = new Label("Score: 0");
+        scoreLabel.setFont(new Font(16));
+        scoreLabel.setLayoutX(10);
+        scoreLabel.setLayoutY(10);
+        root.getChildren().add(scoreLabel);
+    }
     private void movePaddleLeft() {
         if (paddle.getX() > 0) {
             paddle.setX(paddle.getX() - 20);
@@ -106,7 +134,7 @@ public class BrickBreakerGame extends Application {
             ballSpeedX *= -1;
         }
 
-        if (ball.getCenterY() < 0) {
+        if (ball.getCenterY() - ball.getRadius() <= 80) {
             ballSpeedY *= -1;
         }
         if (ball.getCenterY() >= HEIGHT){
@@ -117,12 +145,29 @@ public class BrickBreakerGame extends Application {
 
         }
     }
-
+    private void createRoof() {
+        roof = new Line(0, 80, WIDTH, 80);
+        root.getChildren().add(roof);
+    }
     private void checkCollision() {
         if (ball.getBoundsInParent().intersects(paddle.getBoundsInParent())) {
             ballSpeedY *= -1;
         }
-        // Add collision detection with bricks here
+        for (javafx.scene.Node node : root.getChildren()) {
+            if (node instanceof Rectangle && node != paddle) {
+                Rectangle brick = (Rectangle) node;
+                if (ball.getBoundsInParent().intersects(brick.getBoundsInParent())) {
+                    root.getChildren().remove(brick);
+                    ballSpeedY *= -1;
+                    score++;
+                    updateScore();
+                    break;
+                }
+            }
+        }
+    }
+    private void updateScore() {
+        scoreLabel.setText("Score: " + score);
     }
     private void checkGameOver(Stage primaryStage) {
         Timeline gameOverTimeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
@@ -138,19 +183,25 @@ public class BrickBreakerGame extends Application {
         gameOverText.setFont(new Font(60));
         gameOverText.setFill(Color.RED);
         gameOverText.setX((WIDTH - gameOverText.getBoundsInLocal().getWidth()) / 2);
-        gameOverText.setY(HEIGHT / 2 - 100);
+        gameOverText.setY(HEIGHT / 2 - 50);
 
         Text pressEnterToQuit = new Text("Press Escape to Quit");
         pressEnterToQuit.setFont(new Font(25));
         pressEnterToQuit.setFill(Color.BLUE);
         pressEnterToQuit.setX(WIDTH / 2 - 110);
-        pressEnterToQuit.setY(HEIGHT /2 + 40);
+        pressEnterToQuit.setY(HEIGHT /2 + 170);
 
         Text pressSpaceToTryAgain = new Text("Press Space to try again");
         pressSpaceToTryAgain.setFont(new Font(25));
         pressSpaceToTryAgain.setFill(Color.BLUE);
         pressSpaceToTryAgain.setX(WIDTH / 2 - 120);
-        pressSpaceToTryAgain.setY(HEIGHT /2 + 70);
+        pressSpaceToTryAgain.setY(HEIGHT /2 + 200);
+
+        Text yourScoreWas = new Text("Your Score: " + score);
+        yourScoreWas.setFont(new Font(25));
+        yourScoreWas.setFill(Color.BLUE);
+        yourScoreWas.setX(WIDTH / 2 - 70);
+        yourScoreWas.setY(HEIGHT /2 + 60);
 
         root.getScene().setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.ESCAPE){
@@ -164,12 +215,13 @@ public class BrickBreakerGame extends Application {
 
             }
         });
-        root.getChildren().addAll(gameOverText, pressEnterToQuit, pressSpaceToTryAgain);
+        root.getChildren().addAll(gameOverText, pressEnterToQuit, pressSpaceToTryAgain, yourScoreWas);
     }
     private void restartGame() {
         gameOver = false;
         ballSpeedX = -1.5;
         ballSpeedY = -1.5;
+        score = 0;
         root.getChildren().clear();
         createPaddle();
         createBall();
