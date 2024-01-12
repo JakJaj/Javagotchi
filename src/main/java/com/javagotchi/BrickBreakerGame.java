@@ -286,7 +286,7 @@ public class BrickBreakerGame extends Application {
      * @param primaryStage the primary stage of the JavaFX application
      */
     private void checkGameOver(Stage primaryStage) {
-        Timeline gameOverTimeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
+        Timeline gameOverTimeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             if (gameOver) {
                 //TODO:PLAY METHOD FROM CHARACTER!
                 updateLabels();
@@ -303,7 +303,7 @@ public class BrickBreakerGame extends Application {
      * @param primaryStage the primary stage of the JavaFX application
      */
     private void checkGameStart(Stage primaryStage) {
-        Timeline gameStartTimeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
+        Timeline gameStartTimeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             if (gameStart) {
                 updateLabels();
                 displayGameStart(primaryStage);
@@ -318,7 +318,7 @@ public class BrickBreakerGame extends Application {
      * @param primaryStage the primary stage of the game
      */
     private void checkGameComplete(Stage primaryStage) {
-        Timeline gameCompleteTimeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
+        Timeline gameCompleteTimeline = new Timeline(new KeyFrame(Duration.millis(10), event -> {
             if (score == 30) {
                 //TODO:PLAY METHOD FROM CHARACTER!
                 ballSpeedY = 0;
