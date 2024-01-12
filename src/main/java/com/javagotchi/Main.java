@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.geometry.*; // pos only prob?
 import javafx.util.Duration;
 import java.io.IOException;
@@ -18,7 +19,6 @@ import java.time.LocalTime;
 
 public class Main extends Application {
     private Character character;
-    private Label nameLabel;
     private Label ageLabel;
     private Label healthLabel;
     private Label hungerLabel;
@@ -26,6 +26,9 @@ public class Main extends Application {
     private Label happinessLabel;
     private Label energyLabel;
     private Label sleepLabel;
+    private Label expLabel;
+    private Label weigthLabel;
+    private Label levelLabel;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -40,7 +43,6 @@ public class Main extends Application {
         topSection.setStyle(containerBackground);
 
         // Test labels
-        nameLabel = new Label("Energy: " + character.getEnergy());
         ageLabel = new Label("Age: " + character.getAge());
         healthLabel = new Label("Health: " + character.getHealth());
         hungerLabel = new Label("Hunger: " + character.getHunger());
@@ -48,11 +50,11 @@ public class Main extends Application {
         happinessLabel = new Label("Happiness: " + character.getHappiness());
         energyLabel = new Label("Energy: " + character.getEnergy());
         sleepLabel = new Label("Sleeping?: " + character.isSleeping());
+        expLabel = new Label("Exp: " + character.getExperience());
+        weigthLabel = new Label("Weigth: " + character.getWeight());
+        levelLabel = new Label("Level: " + character.getLevel());
 
         String labelStyle = "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
-        nameLabel.setLayoutX(20);
-        nameLabel.setLayoutY(20);
-        nameLabel.setStyle(labelStyle);
         ageLabel.setLayoutX(20);
         ageLabel.setLayoutY(50);
         ageLabel.setStyle(labelStyle);
@@ -72,10 +74,19 @@ public class Main extends Application {
         energyLabel.setLayoutY(80);
         energyLabel.setStyle(labelStyle);
         sleepLabel.setLayoutX(280);
-        sleepLabel.setLayoutY(80);
+        sleepLabel.setLayoutY(20);
         sleepLabel.setStyle(labelStyle);
+        expLabel.setLayoutX(280);
+        expLabel.setLayoutY(50);
+        expLabel.setStyle(labelStyle);
+        weigthLabel.setLayoutX(280);
+        weigthLabel.setLayoutY(80);
+        weigthLabel.setStyle(labelStyle);
+        levelLabel.setLayoutX(280);
+        levelLabel.setLayoutY(110);
+        levelLabel.setStyle(labelStyle);
 
-        topSection.getChildren().addAll(nameLabel, ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, sleepLabel);
+        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, sleepLabel, expLabel, weigthLabel, levelLabel);
         // Top section needs some cleaning up
 
         Pane bottomSection = new Pane();
@@ -87,19 +98,41 @@ public class Main extends Application {
 
         // Load image as background
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream("background.jpg");
-        if (is == null) { 
+        InputStream bg = classloader.getResourceAsStream("background3.jpg");
+        if (bg == null) { 
             System.out.println("Error: image not found");
             System.exit(1);
         }
         BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(is), // Image by pikisuperstar on Freepik "https://www.freepik.com/free-vector/pixel-art-mystical-background_29019077.htm#query=pixel%20art&position=0&from_view=keyword&track=ais&uuid=623d5b35-1c83-4891-bd52-b617b3a15dac"
+                new Image(bg), // Image by pikisuperstar on Freepik "https://www.freepik.com/free-vector/pixel-art-mystical-background_29019077.htm#query=pixel%20art&position=0&from_view=keyword&track=ais&uuid=623d5b35-1c83-4891-bd52-b617b3a15dac"
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT
         );
+
+        character.setLevel(3); //TEST
+
         centerSection.setBackground(new Background(backgroundImage));
+        String characterImageString = "small.png";
+        if (character.getLevel() > 2 && character.getLevel() < 5){
+            characterImageString = "mid.png";}
+        else if (character.getLevel() > 5){
+            characterImageString = "big.png";}
+        InputStream characterImage = classloader.getResourceAsStream(characterImageString);
+        if (characterImage == null) { 
+            System.out.println("Error: character image not found");
+            System.exit(1);
+        }
+        ImageView characterImageView = new ImageView(new Image(characterImage));
+        characterImageView.setFitWidth(200);
+        characterImageView.setPreserveRatio(true);
+        characterImageView.setLayoutX((centerSection.getPrefWidth() - characterImageView.getFitWidth()) / 2); // Center the small image horizontally
+        characterImageView.setLayoutY((centerSection.getPrefHeight() - characterImageView.getFitHeight()) / 2); // Center the small image vertically
+
+        centerSection.getChildren().add(characterImageView);
+
+        
 
         VBox root = new VBox(topSection, centerSection, bottomSection);
         scene.setRoot(root);
@@ -179,7 +212,6 @@ public class Main extends Application {
     }
 
     private void updateLabels() {
-        nameLabel.setText("Energy: " + character.getEnergy());
         ageLabel.setText("Age: " + character.getAge());
         healthLabel.setText("Health: " + character.getHealth());
         hungerLabel.setText("Hunger: " + character.getHunger());
@@ -187,6 +219,9 @@ public class Main extends Application {
         happinessLabel.setText("Happiness: " + character.getHappiness());
         energyLabel.setText("Energy: " + character.getEnergy());
         sleepLabel.setText("Sleeping?: " + character.isSleeping());
+        expLabel = new Label("Exp: " + character.getExperience());
+        weigthLabel = new Label("Weigth: " + character.getWeight());
+        levelLabel = new Label("Level: " + character.getLevel());
     }
 
     public static void main(String[] args) {
