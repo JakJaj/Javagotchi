@@ -25,6 +25,7 @@ public class Main extends Application {
     private Label cleanlinessLabel;
     private Label happinessLabel;
     private Label energyLabel;
+    private Label sleepLabel;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -46,6 +47,7 @@ public class Main extends Application {
         cleanlinessLabel = new Label("Cleanliness: " + character.getCleanliness());
         happinessLabel = new Label("Happiness: " + character.getHappiness());
         energyLabel = new Label("Energy: " + character.getEnergy());
+        sleepLabel = new Label("Sleeping?: " + character.isSleeping());
 
         String labelStyle = "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
         nameLabel.setLayoutX(20);
@@ -69,8 +71,11 @@ public class Main extends Application {
         energyLabel.setLayoutX(150);
         energyLabel.setLayoutY(80);
         energyLabel.setStyle(labelStyle);
+        sleepLabel.setLayoutX(280);
+        sleepLabel.setLayoutY(80);
+        sleepLabel.setStyle(labelStyle);
 
-        topSection.getChildren().addAll(nameLabel, ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel);
+        topSection.getChildren().addAll(nameLabel, ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, sleepLabel);
         // Top section needs some cleaning up
 
         Pane bottomSection = new Pane();
@@ -143,6 +148,7 @@ public class Main extends Application {
                 buttonSleep.setText("SLEEP");
                 System.out.println("THEY WOKE UP");}
             else{
+                character.sleep();
                 buttonSleep.setText("WAKE UP");
                 System.out.println("SLEEPY EPPY :3");}
             updateLabels();
@@ -180,6 +186,7 @@ public class Main extends Application {
         cleanlinessLabel.setText("Cleanliness: " + character.getCleanliness());
         happinessLabel.setText("Happiness: " + character.getHappiness());
         energyLabel.setText("Energy: " + character.getEnergy());
+        sleepLabel.setText("Sleeping?: " + character.isSleeping());
     }
 
     public static void main(String[] args) {
