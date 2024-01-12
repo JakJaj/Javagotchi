@@ -133,7 +133,7 @@ public class DataBase {
      * */
     public Character getLatestCharacterData(){
         String query = "SELECT * FROM " + TABLE_CHARACTER + " ORDER BY " + COLUMN_ID + " DESC LIMIT 1";
-        Character character = new Character();
+        Character character = Character.getInstance();
 
         try(Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query)){
