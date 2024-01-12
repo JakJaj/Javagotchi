@@ -129,7 +129,6 @@ public class Main extends Application {
             System.out.println("EAT");
         });
         buttonPlay.setOnAction(e -> {
-            character.play();
             updateLabels();
             System.out.println("PLAY");
             showBrickBreakerGame(stage);
@@ -169,6 +168,7 @@ public class Main extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
             stage.setScene(scene);
             updateLabels(); // Refreshing scene every 10 seconds (mainly for top bars)
+            character.timePassed();
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
