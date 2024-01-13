@@ -14,7 +14,7 @@ import javafx.geometry.*; // pos only prob?
 import javafx.util.Duration;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalTime;
+// import java.time.LocalTime;
 
 
 public class Main extends Application {
@@ -25,8 +25,8 @@ public class Main extends Application {
     private Label cleanlinessLabel;
     private Label happinessLabel;
     private Label energyLabel;
-    private Label sleepLabel;
-    private Label expLabel;
+    //private Label sleepLabel;
+    //private Label expLabel;
     private Label weigthLabel;
     private Label levelLabel;
 
@@ -37,57 +37,67 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
 
+
         String containerBackground = "-fx-background-color: #44394d;";// it should go to fxml file
         Pane topSection = new Pane();
         topSection.setPrefSize(800, 150);
         topSection.setStyle(containerBackground);
 
         // Test labels
-        ageLabel = new Label("Age: " + character.getAge());
-        healthLabel = new Label("Health: " + character.getHealth());
-        hungerLabel = new Label("Hunger: " + character.getHunger());
-        cleanlinessLabel = new Label("Cleanliness: " + character.getCleanliness());
-        happinessLabel = new Label("Happiness: " + character.getHappiness());
-        energyLabel = new Label("Energy: " + character.getEnergy());
-        sleepLabel = new Label("Sleeping?: " + character.isSleeping());
-        expLabel = new Label("Exp: " + character.getExperience());
-        weigthLabel = new Label("Weigth: " + character.getWeight());
-        levelLabel = new Label("Level: " + character.getLevel());
+        VBox section1 = new VBox();
+        section1.setPrefSize(200, 150);
+        section1.setLayoutX(0);
+        section1.setLayoutY(0);
+        section1.setStyle("-fx-background-color: #663399;");
 
-        String labelStyle = "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
-        ageLabel.setLayoutX(20);
-        ageLabel.setLayoutY(50);
-        ageLabel.setStyle(labelStyle);
-        healthLabel.setLayoutX(20);
-        healthLabel.setLayoutY(80);
-        healthLabel.setStyle(labelStyle);
-        hungerLabel.setLayoutX(20);
-        hungerLabel.setLayoutY(110);
-        hungerLabel.setStyle(labelStyle);
-        cleanlinessLabel.setLayoutX(150);
-        cleanlinessLabel.setLayoutY(20);
-        cleanlinessLabel.setStyle(labelStyle);
-        happinessLabel.setLayoutX(150);
-        happinessLabel.setLayoutY(50);
-        happinessLabel.setStyle(labelStyle);
-        energyLabel.setLayoutX(150);
-        energyLabel.setLayoutY(80);
-        energyLabel.setStyle(labelStyle);
-        sleepLabel.setLayoutX(280);
-        sleepLabel.setLayoutY(20);
-        sleepLabel.setStyle(labelStyle);
-        expLabel.setLayoutX(280);
-        expLabel.setLayoutY(50);
-        expLabel.setStyle(labelStyle);
-        weigthLabel.setLayoutX(280);
-        weigthLabel.setLayoutY(80);
-        weigthLabel.setStyle(labelStyle);
-        levelLabel.setLayoutX(280);
-        levelLabel.setLayoutY(110);
-        levelLabel.setStyle(labelStyle);
+        VBox section2 = new VBox();
+        section2.setPrefSize(200, 150);
+        section2.setLayoutX(200);
+        section2.setLayoutY(0);
+        section2.setStyle("-fx-background-color: #9932CC;");
 
-        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, sleepLabel, expLabel, weigthLabel, levelLabel);
-        // Top section needs some cleaning up
+        VBox section3 = new VBox();
+        section3.setPrefSize(200, 150);
+        section3.setLayoutX(400);
+        section3.setLayoutY(0);
+        section3.setStyle("-fx-background-color: #8A2BE2;");
+
+        VBox section4 = new VBox();
+        section4.setPrefSize(200, 150);
+        section4.setLayoutX(600);
+        section4.setLayoutY(0);
+        section4.setStyle("-fx-background-color: #9370DB;");
+
+        // Labels for section 1
+        Label ageLabel = new Label("Age: " + character.getAge());
+        Label healthLabel = new Label("Health: " + character.getHealth());
+        ageLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        healthLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        section1.getChildren().addAll(ageLabel, healthLabel);
+
+        // Labels for section 2
+        Label hungerLabel = new Label("Hunger: " + character.getHunger());
+        Label cleanlinessLabel = new Label("Cleanliness: " + character.getCleanliness());
+        hungerLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        cleanlinessLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        section2.getChildren().addAll(hungerLabel, cleanlinessLabel);
+
+        // Labels for section 3
+        Label happinessLabel = new Label("Happiness: " + character.getHappiness());
+        Label energyLabel = new Label("Energy: " + character.getEnergy());
+        happinessLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        energyLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        section3.getChildren().addAll(happinessLabel, energyLabel);
+
+        // Labels for section 4
+        Label weigthLabel = new Label("Weigth: " + "Underweight");
+        Label levelLabel = new Label("Level: " + character.getLevel());
+        weigthLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        levelLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");
+        section4.getChildren().addAll(weigthLabel, levelLabel);
+
+        topSection.getChildren().addAll(section1, section2, section3, section4);
+
 
         Pane bottomSection = new Pane();
         bottomSection.setPrefSize(800, 150);
@@ -104,14 +114,14 @@ public class Main extends Application {
             System.exit(1);
         }
         BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(bg), // Image by pikisuperstar on Freepik "https://www.freepik.com/free-vector/pixel-art-mystical-background_29019077.htm#query=pixel%20art&position=0&from_view=keyword&track=ais&uuid=623d5b35-1c83-4891-bd52-b617b3a15dac"
+                new Image(bg),
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT
         );
 
-        character.setLevel(3); //TEST
+        //character.setLevel(3); // TEST
 
         centerSection.setBackground(new Background(backgroundImage));
         String characterImageString = "small.png";
@@ -211,27 +221,50 @@ public class Main extends Application {
 
 
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             stage.setScene(scene);
             updateLabels(); // Refreshing scene every 10 seconds (mainly for top bars)
+            healthCheck(); // Checking if character is dead
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
 
+
+    private void healthCheck() {
+        if (character.getHealth() <= 0) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Game Over");
+            alert.setHeaderText(null);
+            alert.setContentText("YOUR CHARACTER IS DEAD");
+            alert.showAndWait();
+            System.exit(0);
+        }
+    }
+
     private void updateLabels() {
-        ageLabel.setText("Age: " + character.getAge());
+        String weigthText = "None";
+        if (character.getWeight() <= 30){
+            weigthText = "Underweight";
+        }
+        else if (character.getWeight() > 30 && character.getWeight() <= 150){
+            weigthText = "Regular";
+        }
+        else if (character.getWeight() > 150 && character.getWeight() <= 300){
+            weigthText = "Overweight";
+        }
+        else if (character.getWeight() > 300){
+            weigthText = "Obese";
+        }
+
+        //ageLabel.setText("Age: " + character.getAge()); // what is wrong with this
         healthLabel.setText("Health: " + character.getHealth());
         hungerLabel.setText("Hunger: " + character.getHunger());
         cleanlinessLabel.setText("Cleanliness: " + character.getCleanliness());
         happinessLabel.setText("Happiness: " + character.getHappiness());
         energyLabel.setText("Energy: " + character.getEnergy());
-        sleepLabel.setText("Sleeping?: " + character.isSleeping());
-        expLabel = new Label("Exp: " + character.getExperience());
-        weigthLabel = new Label("Weigth: " + character.getWeight());
-        levelLabel = new Label("Level: " + character.getLevel());
-
-        
+        weigthLabel.setText("Weigth: " + weigthText);
+        levelLabel.setText("Level: " + character.getLevel());
     }
 
     
