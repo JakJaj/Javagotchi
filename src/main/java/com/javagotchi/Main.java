@@ -140,12 +140,8 @@ public class Main extends Application {
         Button buttonEat = new Button("EAT");
         Button buttonPlay = new Button("PLAY");
         Button buttonClean = new Button("CLEAN");
-        Button buttonSleep = new Button();
+        Button buttonSleep = new Button("SLEEP");
         // I'm not sure about that one
-        if (character.isSleeping()){
-            buttonSleep.setText("SLEEP");}
-        else{
-            buttonSleep.setText("WAKE UP");}
 
 
         buttonEat.setPrefSize(120, 60);
@@ -179,13 +175,23 @@ public class Main extends Application {
             if (character.isSleeping()){
                 character.wakeUp();
                 buttonSleep.setText("SLEEP");
-                System.out.println("THEY WOKE UP");}
+                System.out.println("THEY WOKE UP");
+                buttonEat.setDisable(character.isSleeping());
+                buttonPlay.setDisable(character.isSleeping());
+                buttonClean.setDisable(character.isSleeping());
+            }
             else{
                 character.sleep();
                 buttonSleep.setText("WAKE UP");
-                System.out.println("SLEEPY EPPY :3");}
+                System.out.println("SLEEPY EPPY :3");
+                buttonEat.setDisable(character.isSleeping());
+                buttonPlay.setDisable(character.isSleeping());
+                buttonClean.setDisable(character.isSleeping());
+            }
             updateLabels();
         });
+
+        
 
         HBox buttonContainer = new HBox(buttonEat, buttonPlay, buttonClean, buttonSleep);
         buttonContainer.setSpacing(30);
@@ -201,6 +207,8 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(false); // Block window resizing from users
         stage.show();
+
+
 
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
@@ -222,7 +230,11 @@ public class Main extends Application {
         expLabel = new Label("Exp: " + character.getExperience());
         weigthLabel = new Label("Weigth: " + character.getWeight());
         levelLabel = new Label("Level: " + character.getLevel());
+
+        
     }
+
+    
 
     public static void main(String[] args) {
         launch();
