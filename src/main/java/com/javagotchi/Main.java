@@ -5,6 +5,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
@@ -128,9 +129,9 @@ public class Main extends Application {
             System.out.println("EAT");
         });
         buttonPlay.setOnAction(e -> {
-            character.play();
             updateLabels();
             System.out.println("PLAY");
+            showBrickBreakerGame(stage);
         });
         buttonClean.setOnAction(e -> {
             character.clean();
@@ -167,6 +168,7 @@ public class Main extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
             stage.setScene(scene);
             updateLabels(); // Refreshing scene every 10 seconds (mainly for top bars)
+            character.timePassed();
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -181,6 +183,26 @@ public class Main extends Application {
         happinessLabel.setText("Happiness: " + character.getHappiness());
         energyLabel.setText("Energy: " + character.getEnergy());
     }
+    /**
+     * Displays the Brick Breaker game window.
+     *
+     * @param primaryStage the primary stage of the application
+     */
+    private void showBrickBreakerGame(Stage primaryStage) {
+        Stage brickBreakerStage = new Stage();
+        brickBreakerStage.initModality(Modality.WINDOW_MODAL);
+        brickBreakerStage.initOwner(primaryStage);
+
+        BrickBreakerGame brickBreakerGame = new BrickBreakerGame();
+        brickBreakerGame.start(brickBreakerStage);
+        brickBreakerStage.setOnCloseRequest(event -> {
+
+            System.out.println("Brick Breaker Game window closed.");
+        });
+
+        brickBreakerStage.show();
+    }
+
 
     public static void main(String[] args) {
         launch();

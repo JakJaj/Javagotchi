@@ -155,6 +155,8 @@ public class DataBase {
                 character.setHappiness(resultSet.getInt(INDEX_CHARACTER_HAPPINESS));
                 character.setSleeping((resultSet.getInt(INDEX_CHARACTER_SLEEPING) == 1 )); //if the character was sleeping the value is 1
 
+                character.setAlive(character.getHealth() <= 0);
+
                 if(character.isSleeping()){
 
                     character.setBedTime(LocalTime.parse(lastUsage,formatter));
