@@ -3,6 +3,7 @@ package com.javagotchi;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -25,6 +26,8 @@ import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.Optional;
 import java.net.URL;
+import java.awt.Desktop;
+import java.net.URI;
 
 
 public class Main extends Application {
@@ -115,8 +118,29 @@ public class Main extends Application {
         hibernationLabel.setStyle("-fx-text-fill: #84b390;");
         hibernationLabel.setFont(Font.font("Helvetica", 24));
 
-        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, weigthLabel, levelLabel, hibernationLabel);
-        // Top section needs some cleaning up
+
+        String github = "/github.png";
+        Image githubImage = new Image(getClass().getResource(github).toExternalForm());
+        ImageView githubImageView = new ImageView(githubImage);
+        githubImageView.setFitHeight(30);
+        githubImageView.setFitWidth(30);
+        Hyperlink link = new Hyperlink();
+        link.setGraphic(githubImageView);
+        link.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+        link.setOnAction(event -> {
+            try {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(new URI("https://github.com/JakJaj/Javagotchi"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        link.setLayoutX(380);
+        link.setLayoutY(5);
+
+        topSection.getChildren().addAll(link, ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, weigthLabel, levelLabel, hibernationLabel);
 
         Pane bottomSection = new Pane();
         bottomSection.setPrefSize(800, 150);

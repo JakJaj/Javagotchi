@@ -3,6 +3,7 @@ module com.example.javagotchi {
     requires transitive javafx.graphics;
     requires javafx.fxml;
     requires javafx.media;
+    requires java.desktop;
     requires lombok;
     requires java.sql;
 
