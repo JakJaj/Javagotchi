@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
@@ -167,9 +168,9 @@ public class Main extends Application {
             System.out.println("EAT");
         });
         buttonPlay.setOnAction(e -> {
-            character.play();
             updateLabels();
             System.out.println("PLAY");
+            showBrickBreakerGame(stage);
         });
         buttonClean.setOnAction(e -> {
             character.clean();
@@ -249,7 +250,7 @@ public class Main extends Application {
                 });
             }
         }
-
+  
         private void updateStats() {
             if (character.isSleeping()) {
                 hibernateCounter++;
@@ -307,6 +308,26 @@ public class Main extends Application {
             levelLabel.setText("Level: " + character.getLevel());
         
     }
+    /**
+     * Displays the Brick Breaker game window.
+     *
+     * @param primaryStage the primary stage of the application
+     */
+    private void showBrickBreakerGame(Stage primaryStage) {
+        Stage brickBreakerStage = new Stage();
+        brickBreakerStage.initModality(Modality.WINDOW_MODAL);
+        brickBreakerStage.initOwner(primaryStage);
+
+        BrickBreakerGame brickBreakerGame = new BrickBreakerGame();
+        brickBreakerGame.start(brickBreakerStage);
+        brickBreakerStage.setOnCloseRequest(event -> {
+
+            System.out.println("Brick Breaker Game window closed.");
+        });
+
+        brickBreakerStage.show();
+    }
+
 
     public static void main(String[] args) {
         launch();

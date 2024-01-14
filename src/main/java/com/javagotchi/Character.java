@@ -35,6 +35,8 @@ public class Character {
     private LocalTime bedTime;
     /** Static and only instance of a Character class*/
     public static Character character;
+    //** Character's being alive flag */
+    public boolean alive;
     /**
      * Private constructor so that its impossible to create an instance of this class using the "new" keyword
      * Use getInstance method to get an instance
@@ -67,7 +69,7 @@ public class Character {
         if(hunger + 25 > 100){
             this.weight++;
             this.happiness = Math.max(happiness - 10, 0);
-
+            this.health = Math.max(health - 5 ,0);
             this.hunger = 100;
             System.out.println("Character overfed");
         }
@@ -95,7 +97,7 @@ public class Character {
             this.cleanliness = Math.min(100,this.cleanliness + 30);
             this.happiness = Math.min(this.happiness + 10, 100);
 
-            this.experience = this.experience + 3;
+            this.experience = this.experience + 5;
             System.out.println("Character is cleaner");
         }
     }
@@ -126,28 +128,27 @@ public class Character {
     /**
     * Playing with a character which makes it happier, hungrier, dirtier, healthier and lighter. WHAT A COMBO!
     * When the character doesn't have enough energy for that activity it loses some health and is getting sadder because of it
+     * @param funAmount the amount of fun the game provides
      */
-    public void play(){
+    public void play(int funAmount){
         if(energy <= 10){
-            this.happiness = Math.max(0, this.happiness - 10);
+            this.happiness = Math.max(0, this.happiness - 20 + funAmount);
             this.health = Math.max(0, this.health - 10);
 
-            this.weight--;
+            this.weight = Math.max(0, weight - 1);
             System.out.println("Character is too tired");
             System.out.println("Don't force it to play");
         }
         else {
-
-            this.happiness = Math.min(100, this.happiness + 10);
-            this.health++;
-            this.experience = this.experience + 5;
-            System.out.println("Character is playing a game");
+            this.happiness = Math.min(100, this.happiness + funAmount);
+            this.health = Math.min(100,this.health + 1);
+            this.experience = this.experience + 10;
+            System.out.println("Character played a game");
         }
 
-        this.energy = Math.max(this.energy - 15, 0);
-        this.hunger = Math.max(0,this.hunger - 10);
+        this.energy = Math.max(this.energy - 10, 0);
+        this.hunger = Math.max(0,this.hunger - 5);
         this.cleanliness = Math.max(0, this.cleanliness - 10);
-
     }
     /**
     * Character level is going up. Only when the experience level is above 100
@@ -163,7 +164,19 @@ public class Character {
             System.out.println("Not enough experience to level up");
         }
     }
-
+    public void timePassed(){
+        this.cleanliness-=1;
+        this.hunger-=1;
+        this.experience+=4;
+        this.happiness-=1;
+        this.energy-=1;
+        levelUp();
+        if(this.health <= 0){
+            this.health = 0;
+            this.alive = false;
+            System.out.println("Character died :/");
+        }
+    }
     @Override
     public String toString() {
 
