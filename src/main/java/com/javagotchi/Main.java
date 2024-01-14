@@ -34,6 +34,7 @@ public class Main extends Application {
     private Label energyLabel;
     private Label weigthLabel;
     private Label levelLabel;
+    private Label hibernationLabel;
     private Timeline timeline;
     private ImageView characterImageView;
     private int statsCounter = 0;
@@ -101,12 +102,16 @@ public class Main extends Application {
         ageLabel.setLayoutX(660);
         ageLabel.setLayoutY(100);
         ageLabel.setStyle(labelStyle);
-        ageLabel.setFont(Font.font("Helvetica", 26));
         ageLabel.setFont(Font.font("Helvetica", 18));
 
         
+        hibernationLabel = new Label("");
+        hibernationLabel.setLayoutX(310);
+        hibernationLabel.setLayoutY(100);
+        hibernationLabel.setStyle("-fx-text-fill: #84b390;");
+        hibernationLabel.setFont(Font.font("Helvetica", 24));
 
-        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, weigthLabel, levelLabel);
+        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, weigthLabel, levelLabel, hibernationLabel);
         // Top section needs some cleaning up
 
         Pane bottomSection = new Pane();
@@ -201,6 +206,7 @@ public class Main extends Application {
                 buttonClean.setDisable(character.isSleeping());
                 nightTime.setBrightness(0.0);
                 centerSection.setEffect(nightTime);
+                hibernationLabel.setText("");
             }
             else{
                 character.sleep();
@@ -211,6 +217,7 @@ public class Main extends Application {
                 buttonClean.setDisable(character.isSleeping());
                 nightTime.setBrightness(-0.6);
                 centerSection.setEffect(nightTime);
+                hibernationLabel.setText("HIBERNATING . . .");
             }
             updateLabels();
         });
