@@ -2,6 +2,7 @@ module com.example.javagotchi {
     requires javafx.controls;
     requires transitive javafx.graphics;
     requires javafx.fxml;
+    requires javafx.media;
     requires lombok;
     requires java.sql;
 
