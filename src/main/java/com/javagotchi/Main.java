@@ -104,7 +104,7 @@ public class Main extends Application {
 
         // Load image as background
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream bg = classloader.getResourceAsStream("background3.jpg");
+        InputStream bg = classloader.getResourceAsStream("background.jpg");
         if (bg == null) { 
             System.out.println("Error: image not found");
             System.exit(1);
