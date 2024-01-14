@@ -173,7 +173,16 @@ public class Main extends Application {
         buttonClean.setPrefSize(120, 60);
         buttonSleep.setPrefSize(120, 60);
 
-        String buttonStyle = "-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"; // it should go into fxml file
+        String buttonStyle = "-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
+        buttonEat.setOnMouseEntered(e -> buttonEat.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonPlay.setOnMouseEntered(e -> buttonPlay.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonClean.setOnMouseEntered(e -> buttonClean.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonSleep.setOnMouseEntered(e -> buttonSleep.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonEat.setOnMouseExited(e -> buttonEat.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonPlay.setOnMouseExited(e -> buttonPlay.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonClean.setOnMouseExited(e -> buttonClean.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonSleep.setOnMouseExited(e -> buttonSleep.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        
         buttonEat.setStyle(buttonStyle);
         buttonPlay.setStyle(buttonStyle);
         buttonClean.setStyle(buttonStyle);
