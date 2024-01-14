@@ -4,6 +4,7 @@ module com.example.javagotchi {
     requires javafx.fxml;
     requires lombok;
     requires java.sql;
+    requires javafx.media;
 
 
     opens com.javagotchi to javafx.fxml;

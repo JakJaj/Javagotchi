@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -15,6 +17,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.Objects;
 
 public class BrickBreakerGame extends Application {
     private static final int WIDTH = 380;
@@ -46,7 +50,9 @@ public class BrickBreakerGame extends Application {
     private int score = 0;
     private Label scoreLabel;
     Timeline timeline;
-
+    String bounce_sound = "/ball_bounce.mp3";
+    Media bounce;
+    MediaPlayer mediaPlayer;
     public static void main(String[] args) {
         launch(args);
     }
@@ -61,7 +67,9 @@ public class BrickBreakerGame extends Application {
         root = new Pane();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         primaryStage.setResizable(false);
-
+        bounce = new Media(getClass().getResource(bounce_sound).toExternalForm());
+        mediaPlayer = new MediaPlayer(bounce);
+        mediaPlayer.setVolume(1.0);
         createPaddle();
         createBall();
         createBricks();
@@ -219,13 +227,16 @@ public class BrickBreakerGame extends Application {
     private void moveBall() {
         ball.setCenterX(ball.getCenterX() + ballSpeedX);
         ball.setCenterY(ball.getCenterY() + ballSpeedY);
+        mediaPlayer.setVolume(1.0);
 
         if (ball.getCenterX() < 0 || ball.getCenterX() > WIDTH) {
             ballSpeedX *= -1;
+            mediaPlayer.play();
         }
 
         if (ball.getCenterY() - ball.getRadius() <= 80) {
             ballSpeedY *= -1;
+            mediaPlayer.play();
         }
         if (ball.getCenterY() >= HEIGHT) {
             ballSpeedY = 0;
@@ -241,6 +252,7 @@ public class BrickBreakerGame extends Application {
      * the score increments, and the score updates.
      */
     private void checkCollision() {
+        mediaPlayer.setVolume(1.0);
         if (ball.getBoundsInParent().intersects(paddle.getBoundsInParent())) {
             double paddleWidthSegment = PADDLE_WIDTH / 5.0;
             double paddleX = paddle.getX();
@@ -257,6 +269,7 @@ public class BrickBreakerGame extends Application {
 
             ballSpeedY *= -1 * bounceFactor; // Adjust bounce angle
             normalizeBallSpeed(); // Keep ball speed constant
+            mediaPlayer.play();
         }
 
         for (javafx.scene.Node node : root.getChildren()) {
@@ -280,7 +293,7 @@ public class BrickBreakerGame extends Application {
                         // Collision with sides of the brick
                         ballSpeedX *= -1;
                     }
-
+                    mediaPlayer.play();
                     score++;
                     updateScore();
                     break;
