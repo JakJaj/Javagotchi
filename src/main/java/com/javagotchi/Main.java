@@ -200,8 +200,6 @@ public class Main extends Application {
             updateLabels();
         });
 
-        
-
         HBox buttonContainer = new HBox(buttonEat, buttonPlay, buttonClean, buttonSleep);
         buttonContainer.setSpacing(30);
         buttonContainer.setAlignment(Pos.CENTER);
@@ -235,7 +233,7 @@ public class Main extends Application {
         }
         
         private void healthCheck() {
-            if (character.getHealth() <= 0) {
+            if (character.getHealth() <= 1) {
                 System.out.println("YOUR CHARACTER IS DEAD");
                 InputStream deadImage = getClass().getClassLoader().getResourceAsStream("dead.png");
                 if (deadImage == null) { 
@@ -244,7 +242,7 @@ public class Main extends Application {
                 }
                 characterImageView.setImage(new Image(deadImage));
                 
-                timeline.stop(); // Stop the timeline
+                timeline.stop();
         
                 Platform.runLater(() -> {
                     
@@ -261,7 +259,13 @@ public class Main extends Application {
         private void updateStats() {
             character.setHunger(character.getHunger() - 1);
             character.setCleanliness(character.getCleanliness() - 1);
-            character.setEnergy(character.getEnergy() - 1);
+            character.setHappiness(character.getHappiness() - 1);
+            if (character.isSleeping()) {
+                //character.setEnergy(Math.min(100, character.getEnergy() + 1));
+            }
+            else {
+                character.setEnergy(character.getEnergy() - 1);
+            }
             character.setExperience(character.getExperience() + 1);
             character.setWeight(character.getWeight() - 1);
             if(character.getExperience() >= 5){
@@ -297,9 +301,6 @@ public class Main extends Application {
             expLabel.setText("Exp: " + character.getExperience());
             weigthLabel.setText("Weigth: " + character.getWeight());
             levelLabel.setText("Level: " + character.getLevel());
-            if (character.getHealth() <= 0) {
-                timeline.stop(); // Stop the timeline
-            }
         
     }
 
