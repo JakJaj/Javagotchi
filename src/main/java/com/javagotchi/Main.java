@@ -29,6 +29,7 @@ import java.net.URL;
 
 public class Main extends Application {
     private Character character;
+    private DataBase dataBase;
     private Label ageLabel;
     private Label healthLabel;
     private Label hungerLabel;
@@ -46,7 +47,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         character = Character.getInstance();
-
+        dataBase = DataBase.getInstance();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
 
@@ -284,6 +285,14 @@ public class Main extends Application {
             }));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
+
+        stage.setOnCloseRequest(event -> {
+            if (dataBase.open()){
+                dataBase.insertNewestData(character);
+                System.out.println("Update database using a current stats");
+            }
+            System.out.println("Javagotchi closed!");
+        });
         }
         
         private String causeOfDeath(){
@@ -388,16 +397,10 @@ public class Main extends Application {
         }
 
         private void resetGame() {
-            character.setAge(0);
-            character.setHealth(100);
-            character.setHunger(100);
-            character.setCleanliness(100);
-            character.setHappiness(100);
-            character.setEnergy(100);
-            character.setSleeping(false);
-            character.setExperience(0);
-            character.setWeight(50);
-            character.setLevel(1);
+            if(dataBase.open()) {
+                dataBase.resetDatabase();
+            }
+            character = DataBase.getInstance().getLatestCharacterData();
             characterImageView.setImage(new Image(getClass().getClassLoader().getResourceAsStream("small.png")));
             updateLabels();
         }

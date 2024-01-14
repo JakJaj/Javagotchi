@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -15,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 
 public class BrickBreakerGame extends Application {
     private static final int WIDTH = 380;
@@ -46,7 +49,13 @@ public class BrickBreakerGame extends Application {
     private int score = 0;
     private Label scoreLabel;
     Timeline timeline;
-
+    String bounce_sound = "/bounce.mp3";
+    String game_over_sound = "/game_over.mp3";
+    String game_start_sound = "/game_start.mp3";
+    Media bounce = new Media(getClass().getResource(bounce_sound).toExternalForm());
+    Media game_over = new Media(getClass().getResource(game_over_sound).toExternalForm());
+    Media game_start = new Media(getClass().getResource(game_start_sound).toExternalForm());
+    MediaPlayer mediaPlayer = new MediaPlayer(bounce);
     public static void main(String[] args) {
         launch(args);
     }
@@ -61,7 +70,13 @@ public class BrickBreakerGame extends Application {
         root = new Pane();
         Scene scene = new Scene(root, WIDTH, HEIGHT);
         primaryStage.setResizable(false);
-
+        if(gameStart){
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = new MediaPlayer(game_start);
+            mediaPlayer.setVolume(1.0);
+            mediaPlayer.play();
+        }
         createPaddle();
         createBall();
         createBricks();
@@ -222,14 +237,29 @@ public class BrickBreakerGame extends Application {
 
         if (ball.getCenterX() < 0 || ball.getCenterX() > WIDTH) {
             ballSpeedX *= -1;
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = new MediaPlayer(bounce);
+            mediaPlayer.setVolume(1.0);
+            mediaPlayer.play();
         }
 
         if (ball.getCenterY() - ball.getRadius() <= 80) {
             ballSpeedY *= -1;
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = new MediaPlayer(bounce);
+            mediaPlayer.setVolume(1.0);
+            mediaPlayer.play();
         }
         if (ball.getCenterY() >= HEIGHT) {
             ballSpeedY = 0;
             ballSpeedX = 0;
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = new MediaPlayer(game_over);
+            mediaPlayer.setVolume(1.0);
+            mediaPlayer.play();
             System.out.println("Game Over");
             gameOver = true;
         }
@@ -241,7 +271,9 @@ public class BrickBreakerGame extends Application {
      * the score increments, and the score updates.
      */
     private void checkCollision() {
+
         if (ball.getBoundsInParent().intersects(paddle.getBoundsInParent())) {
+            System.out.println(mediaPlayer.getStatus());
             double paddleWidthSegment = PADDLE_WIDTH / 5.0;
             double paddleX = paddle.getX();
 
@@ -257,6 +289,11 @@ public class BrickBreakerGame extends Application {
 
             ballSpeedY *= -1 * bounceFactor; // Adjust bounce angle
             normalizeBallSpeed(); // Keep ball speed constant
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = new MediaPlayer(bounce);
+            mediaPlayer.setVolume(1.0);
+            mediaPlayer.play();
         }
 
         for (javafx.scene.Node node : root.getChildren()) {
@@ -282,6 +319,11 @@ public class BrickBreakerGame extends Application {
                     }
 
                     score++;
+                    mediaPlayer.stop();
+                    mediaPlayer.dispose();
+                    mediaPlayer = new MediaPlayer(bounce);
+                    mediaPlayer.setVolume(1.0);
+                    mediaPlayer.play();
                     updateScore();
                     break;
                 }
@@ -427,6 +469,7 @@ public class BrickBreakerGame extends Application {
      * @param primaryStage the primary stage of the JavaFX application
      */
     private void displayGameStart(Stage primaryStage) {
+
         Text gameStartText = new Text("Start a game!");
         gameStartText.setFont(new Font(60));
         gameStartText.setFill(Color.RED);
@@ -466,7 +509,6 @@ public class BrickBreakerGame extends Application {
      * @param primaryStage the primary stage of the JavaFX application
      */
     private void displayGameComplete(Stage primaryStage) {
-
         Text gameCompleteText = new Text("Game\nCompleted!");
         gameCompleteText.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
         gameCompleteText.setFont(new Font(60));
