@@ -11,16 +11,20 @@ import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.geometry.*; // pos only prob?
 import javafx.util.Duration;
 import lombok.ToString;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.net.URL;
 
 
 public class Main extends Application {
@@ -34,6 +38,7 @@ public class Main extends Application {
     private Label energyLabel;
     private Label weigthLabel;
     private Label levelLabel;
+    private Label hibernationLabel;
     private Timeline timeline;
     private ImageView characterImageView;
     private int statsCounter = 0;
@@ -101,12 +106,16 @@ public class Main extends Application {
         ageLabel.setLayoutX(660);
         ageLabel.setLayoutY(100);
         ageLabel.setStyle(labelStyle);
-        ageLabel.setFont(Font.font("Helvetica", 26));
         ageLabel.setFont(Font.font("Helvetica", 18));
 
         
+        hibernationLabel = new Label("");
+        hibernationLabel.setLayoutX(310);
+        hibernationLabel.setLayoutY(100);
+        hibernationLabel.setStyle("-fx-text-fill: #84b390;");
+        hibernationLabel.setFont(Font.font("Helvetica", 24));
 
-        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, weigthLabel, levelLabel);
+        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, weigthLabel, levelLabel, hibernationLabel);
         // Top section needs some cleaning up
 
         Pane bottomSection = new Pane();
@@ -168,7 +177,16 @@ public class Main extends Application {
         buttonClean.setPrefSize(120, 60);
         buttonSleep.setPrefSize(120, 60);
 
-        String buttonStyle = "-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"; // it should go into fxml file
+        String buttonStyle = "-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
+        buttonEat.setOnMouseEntered(e -> buttonEat.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonPlay.setOnMouseEntered(e -> buttonPlay.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonClean.setOnMouseEntered(e -> buttonClean.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonSleep.setOnMouseEntered(e -> buttonSleep.setStyle("-fx-background-color: #504557; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonEat.setOnMouseExited(e -> buttonEat.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonPlay.setOnMouseExited(e -> buttonPlay.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonClean.setOnMouseExited(e -> buttonClean.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        buttonSleep.setOnMouseExited(e -> buttonSleep.setStyle("-fx-background-color: #2a232e; -fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';"));
+        
         buttonEat.setStyle(buttonStyle);
         buttonPlay.setStyle(buttonStyle);
         buttonClean.setStyle(buttonStyle);
@@ -191,6 +209,7 @@ public class Main extends Application {
             System.out.println("CLEAN");
         });
         buttonSleep.setOnAction(e -> {
+            ColorAdjust nightTime = new ColorAdjust();
             if (character.isSleeping()){
                 character.wakeUp();
                 buttonSleep.setText("SLEEP");
@@ -198,6 +217,9 @@ public class Main extends Application {
                 buttonEat.setDisable(character.isSleeping());
                 buttonPlay.setDisable(character.isSleeping());
                 buttonClean.setDisable(character.isSleeping());
+                nightTime.setBrightness(0.0);
+                centerSection.setEffect(nightTime);
+                hibernationLabel.setText("");
             }
             else{
                 character.sleep();
@@ -206,6 +228,9 @@ public class Main extends Application {
                 buttonEat.setDisable(character.isSleeping());
                 buttonPlay.setDisable(character.isSleeping());
                 buttonClean.setDisable(character.isSleeping());
+                nightTime.setBrightness(-0.6);
+                centerSection.setEffect(nightTime);
+                hibernationLabel.setText("HIBERNATING . . .");
             }
             updateLabels();
         });
@@ -220,12 +245,33 @@ public class Main extends Application {
         buttonContainer.layoutYProperty().bind(bottomSection.heightProperty().subtract(buttonContainer.heightProperty()).divide(2));
         bottomSection.getChildren().add(buttonContainer);
 
+        String bgmusicFile = "/bgmusic.mp3";
+
+        Media sound = new Media(getClass().getResource(bgmusicFile).toExternalForm());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.setVolume(0.1);
+        mediaPlayer.play();
+        
         
         stage.setTitle("Javagotchi");
         stage.setScene(scene);
         stage.setResizable(false); // Block window resizing from user
         stage.show();
 
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.P) {
+                if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                    mediaPlayer.pause();
+                } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                    mediaPlayer.play();
+                }
+            }
+            else if (event.getCode() == KeyCode.ESCAPE) {
+                // Database save here
+                System.exit(0);
+            }
+        });
         
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
                 stage.setScene(scene);
