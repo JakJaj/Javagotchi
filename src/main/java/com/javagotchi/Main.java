@@ -3,6 +3,7 @@ package com.javagotchi;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.geometry.*; // pos only prob?
 import javafx.util.Duration;
 import java.io.IOException;
@@ -19,13 +21,20 @@ import java.time.LocalTime;
 
 public class Main extends Application {
     private Character character;
-    private Label nameLabel;
     private Label ageLabel;
     private Label healthLabel;
     private Label hungerLabel;
     private Label cleanlinessLabel;
     private Label happinessLabel;
     private Label energyLabel;
+    private Label sleepLabel;
+    private Label expLabel;
+    private Label weigthLabel;
+    private Label levelLabel;
+    private Timeline timeline;
+    private ImageView characterImageView;
+    private int statsCounter = 0;
+    private int hibernateCounter = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -40,18 +49,18 @@ public class Main extends Application {
         topSection.setStyle(containerBackground);
 
         // Test labels
-        nameLabel = new Label("Energy: " + character.getEnergy());
         ageLabel = new Label("Age: " + character.getAge());
         healthLabel = new Label("Health: " + character.getHealth());
         hungerLabel = new Label("Hunger: " + character.getHunger());
         cleanlinessLabel = new Label("Cleanliness: " + character.getCleanliness());
         happinessLabel = new Label("Happiness: " + character.getHappiness());
         energyLabel = new Label("Energy: " + character.getEnergy());
+        sleepLabel = new Label("Sleeping?: " + character.isSleeping());
+        expLabel = new Label("Exp: " + character.getExperience());
+        weigthLabel = new Label("Weigth: " + character.getWeight());
+        levelLabel = new Label("Level: " + character.getLevel());
 
         String labelStyle = "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
-        nameLabel.setLayoutX(20);
-        nameLabel.setLayoutY(20);
-        nameLabel.setStyle(labelStyle);
         ageLabel.setLayoutX(20);
         ageLabel.setLayoutY(50);
         ageLabel.setStyle(labelStyle);
@@ -70,8 +79,20 @@ public class Main extends Application {
         energyLabel.setLayoutX(150);
         energyLabel.setLayoutY(80);
         energyLabel.setStyle(labelStyle);
+        sleepLabel.setLayoutX(280);
+        sleepLabel.setLayoutY(20);
+        sleepLabel.setStyle(labelStyle);
+        expLabel.setLayoutX(280);
+        expLabel.setLayoutY(50);
+        expLabel.setStyle(labelStyle);
+        weigthLabel.setLayoutX(280);
+        weigthLabel.setLayoutY(80);
+        weigthLabel.setStyle(labelStyle);
+        levelLabel.setLayoutX(280);
+        levelLabel.setLayoutY(110);
+        levelLabel.setStyle(labelStyle);
 
-        topSection.getChildren().addAll(nameLabel, ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel);
+        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, sleepLabel, expLabel, weigthLabel, levelLabel);
         // Top section needs some cleaning up
 
         Pane bottomSection = new Pane();
@@ -83,19 +104,41 @@ public class Main extends Application {
 
         // Load image as background
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream is = classloader.getResourceAsStream("background.jpg");
-        if (is == null) { 
+        InputStream bg = classloader.getResourceAsStream("background3.jpg");
+        if (bg == null) { 
             System.out.println("Error: image not found");
             System.exit(1);
         }
         BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(is), // Image by pikisuperstar on Freepik "https://www.freepik.com/free-vector/pixel-art-mystical-background_29019077.htm#query=pixel%20art&position=0&from_view=keyword&track=ais&uuid=623d5b35-1c83-4891-bd52-b617b3a15dac"
+                new Image(bg), 
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT
         );
+
+        //character.setLevel(3); //TEST
+
         centerSection.setBackground(new Background(backgroundImage));
+        String characterImageString = "small.png";
+        if (character.getLevel() > 2 && character.getLevel() < 5){
+            characterImageString = "mid.png";}
+        else if (character.getLevel() >= 5){
+            characterImageString = "big.png";}
+        InputStream characterImage = classloader.getResourceAsStream(characterImageString);
+        if (characterImage == null) { 
+            System.out.println("Error: character image not found");
+            System.exit(1);
+        }
+        characterImageView = new ImageView(new Image(characterImage));
+        characterImageView.setFitWidth(200);
+        characterImageView.setPreserveRatio(true);
+        characterImageView.setLayoutX((centerSection.getPrefWidth() - characterImageView.getFitWidth()) / 2); // Center the small image horizontally
+        characterImageView.setLayoutY((centerSection.getPrefHeight() - characterImageView.getFitHeight()) / 2); // Center the small image vertically
+
+        centerSection.getChildren().add(characterImageView);
+
+        
 
         VBox root = new VBox(topSection, centerSection, bottomSection);
         scene.setRoot(root);
@@ -103,12 +146,8 @@ public class Main extends Application {
         Button buttonEat = new Button("EAT");
         Button buttonPlay = new Button("PLAY");
         Button buttonClean = new Button("CLEAN");
-        Button buttonSleep = new Button();
+        Button buttonSleep = new Button("SLEEP");
         // I'm not sure about that one
-        if (character.isSleeping()){
-            buttonSleep.setText("SLEEP");}
-        else{
-            buttonSleep.setText("WAKE UP");}
 
 
         buttonEat.setPrefSize(120, 60);
@@ -142,10 +181,19 @@ public class Main extends Application {
             if (character.isSleeping()){
                 character.wakeUp();
                 buttonSleep.setText("SLEEP");
-                System.out.println("THEY WOKE UP");}
+                System.out.println("THEY WOKE UP");
+                buttonEat.setDisable(character.isSleeping());
+                buttonPlay.setDisable(character.isSleeping());
+                buttonClean.setDisable(character.isSleeping());
+            }
             else{
+                character.sleep();
                 buttonSleep.setText("WAKE UP");
-                System.out.println("SLEEPY EPPY :3");}
+                System.out.println("SLEEPY EPPY :3");
+                buttonEat.setDisable(character.isSleeping());
+                buttonPlay.setDisable(character.isSleeping());
+                buttonClean.setDisable(character.isSleeping());
+            }
             updateLabels();
         });
 
@@ -159,29 +207,106 @@ public class Main extends Application {
         buttonContainer.layoutYProperty().bind(bottomSection.heightProperty().subtract(buttonContainer.heightProperty()).divide(2));
         bottomSection.getChildren().add(buttonContainer);
 
+        
         stage.setTitle("Javagotchi");
         stage.setScene(scene);
-        stage.setResizable(false); // Block window resizing from users
+        stage.setResizable(false); // Block window resizing from user
         stage.show();
 
+        
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                stage.setScene(scene);
+                statsCounter++;
+                if (statsCounter >= 2) {
+                    updateStats();
+                    statsCounter = 0;
+                }
+                updateLabels(); // Refreshing labels every 1 seconds
+                healthCheck();
+            }));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+        }
+        
+        private void healthCheck() {
+            if (character.getHealth() <= 1) {
+                System.out.println("YOUR CHARACTER IS DEAD");
+                InputStream deadImage = getClass().getClassLoader().getResourceAsStream("dead.png");
+                if (deadImage == null) { 
+                    System.out.println("Error: dead image not found");
+                    System.exit(1);
+                }
+                characterImageView.setImage(new Image(deadImage));
+                
+                timeline.stop();
+        
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Game Over");
+                    alert.setHeaderText(null);
+                    alert.setContentText("YOUR CHARACTER IS DEAD");
+                    alert.showAndWait();
+                    System.exit(0);
+                });
+            }
+        }
+  
+        private void updateStats() {
+            if (character.isSleeping()) {
+                hibernateCounter++;
+                if (hibernateCounter >= 5) {
+                    character.setHunger(character.getHunger() - 1);
+                    character.setCleanliness(character.getCleanliness() - 1);
+                    character.setHappiness(character.getHappiness() - 1);
+                    character.setExperience(character.getExperience() + 1);
+                    hibernateCounter = 0;
+                }
+            }
+            else {
+                character.setEnergy(character.getEnergy() - 1);
+                character.setHunger(character.getHunger() - 1);
+                character.setCleanliness(character.getCleanliness() - 1);
+                character.setHappiness(character.getHappiness() - 1);
+                character.setExperience(character.getExperience() + 1);
+            }
+            
+            character.setWeight(character.getWeight() - 1);
+            if(character.getExperience() >= 5){
+                character.setLevel(character.getLevel() + 1);
+                character.setExperience(0);
+            }
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
-            stage.setScene(scene);
-            updateLabels(); // Refreshing scene every 10 seconds (mainly for top bars)
-            character.timePassed();
-        }));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
-    }
+            // Image update
+            if(character.getLevel() > 2 && character.getLevel() < 5){
+                InputStream midImage = getClass().getClassLoader().getResourceAsStream("mid.png");
+                if (midImage == null) { 
+                    System.out.println("Error: mid image not found");
+                    System.exit(1);
+                }
+                characterImageView.setImage(new Image(midImage));
+            }
+            else if(character.getLevel() >= 5){
+                InputStream bigImage = getClass().getClassLoader().getResourceAsStream("big.png");
+                if (bigImage == null) { 
+                    System.out.println("Error: big image not found");
+                    System.exit(1);
+                }
+                characterImageView.setImage(new Image(bigImage));
+            }
+        }
 
-    private void updateLabels() {
-        nameLabel.setText("Energy: " + character.getEnergy());
-        ageLabel.setText("Age: " + character.getAge());
-        healthLabel.setText("Health: " + character.getHealth());
-        hungerLabel.setText("Hunger: " + character.getHunger());
-        cleanlinessLabel.setText("Cleanliness: " + character.getCleanliness());
-        happinessLabel.setText("Happiness: " + character.getHappiness());
-        energyLabel.setText("Energy: " + character.getEnergy());
+        private void updateLabels() {
+            ageLabel.setText("Age: " + character.getAge());
+            healthLabel.setText("Health: " + character.getHealth());
+            hungerLabel.setText("Hunger: " + character.getHunger());
+            cleanlinessLabel.setText("Cleanliness: " + character.getCleanliness());
+            happinessLabel.setText("Happiness: " + character.getHappiness());
+            energyLabel.setText("Energy: " + character.getEnergy());
+            sleepLabel.setText("Sleeping?: " + character.isSleeping());
+            expLabel.setText("Exp: " + character.getExperience());
+            weigthLabel.setText("Weigth: " + character.getWeight());
+            levelLabel.setText("Level: " + character.getLevel());
+        
     }
     /**
      * Displays the Brick Breaker game window.
