@@ -55,11 +55,11 @@ public class Main extends Application {
         ageLabel = new Label("AGE: " + character.getAge());
         healthLabel = new Label("HEALTH: " + character.getHealth());
         hungerLabel = new Label("HUNGER: " + character.getHunger());
-        cleanlinessLabel = new Label("CLEANLINESS: " + character.getCleanliness());
-        happinessLabel = new Label("HAPPINESS: " + character.getHappiness());
+        cleanlinessLabel = new Label("CLEANLINESS: " + cleanlinessCheck(character.getCleanliness()));
+        happinessLabel = new Label("HAPPINESS: " + happinessCheck(character.getHappiness()));
         energyLabel = new Label("ENERGY: " + character.getEnergy());
-        weigthLabel = new Label("WEIGHT: " + character.getWeight());
-        levelLabel = new Label("LEVEL: " + character.getLevel());
+        weigthLabel = new Label("WEIGHT: " + weightCheck(character.getWeight()));
+        levelLabel = new Label(String.format("LEVEL: %d (%s)", character.getLevel(), levelCheck(character.getLevel())));
 
         String labelStyle = "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
         healthLabel.setLayoutX(660);
@@ -77,7 +77,7 @@ public class Main extends Application {
         energyLabel.setStyle(labelStyle);
         energyLabel.setFont(Font.font("Helvetica", 18));
 
-        levelLabel.setLayoutX(660);
+        levelLabel.setLayoutX(30);
         levelLabel.setLayoutY(100);
         levelLabel.setStyle(labelStyle);
         levelLabel.setFont(Font.font("Helvetica", 18));
@@ -98,7 +98,7 @@ public class Main extends Application {
         weigthLabel.setStyle(labelStyle);
         weigthLabel.setFont(Font.font("Helvetica", 18));
 
-        ageLabel.setLayoutX(30);
+        ageLabel.setLayoutX(660);
         ageLabel.setLayoutY(100);
         ageLabel.setStyle(labelStyle);
         ageLabel.setFont(Font.font("Helvetica", 26));
@@ -358,26 +358,73 @@ public class Main extends Application {
         }
 
         private String fontColor(int value) {
-            if (value <= 20) {
+            if (value <= 20)
                 return "-fx-text-fill: #ff6969; -fx-font-family: 'Helvetica';";
-            } 
-            else if (value <= 40) {
+            else if (value <= 40)
                 return "-fx-text-fill: #f2eba7; -fx-font-family: 'Helvetica';";
-            }
-            else {
+            else 
                 return "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
-            }
+        }
+
+        private String weightCheck(int value){
+            if (value <= 10)
+                return "STARVED";
+            else if (value <= 30)
+                return "UNDERWEIGHT";
+            else if (value <= 300)
+                return "NORMAL";
+            else if (value <= 500)
+                return "OVERWEIGHT";
+            else
+                return "OBESE";
+        }
+
+        private String levelCheck(int value){
+            if (value <= 2)
+                return "BABY";
+            else if (value <= 5)
+                return "CHILD";
+            else if (value <= 10)
+                return "TEEN";
+            else
+                return "FULLY GROWN";
+        }
+
+        private String cleanlinessCheck(int value){
+            if (value <= 5)
+                return "DIRTY";
+            else if (value <= 20)
+                return "SMELLY";
+            else if (value <= 70)
+                return "NORMAL";
+            else if (value <= 90)
+                return "CLEAN";
+            else
+                return "SPARKLING";
+        }
+
+        private String happinessCheck(int value){
+            if (value <= 5)
+                return "DEPRESSED";
+            else if (value <= 20)
+                return "SAD";
+            else if (value <= 70)
+                return "NORMAL";
+            else if (value <= 90)
+                return "HAPPY";
+            else
+                return "ECSTATIC";
         }
 
         private void updateLabels() {
             ageLabel.setText("AGE: " + character.getAge());
             healthLabel.setText("HEALTH: " + character.getHealth());
             hungerLabel.setText("HUNGER: " + character.getHunger());
-            cleanlinessLabel.setText("CLEANLINESS: " + character.getCleanliness());
-            happinessLabel.setText("HAPPINESS: " + character.getHappiness());
+            cleanlinessLabel.setText("CLEANLINESS: " + cleanlinessCheck(character.getCleanliness()));
+            happinessLabel.setText("HAPPINESS: " + happinessCheck(character.getHappiness()));
             energyLabel.setText("ENERGY: " + character.getEnergy());
-            weigthLabel.setText("WEIGHT: " + character.getWeight());
-            levelLabel.setText("LEVEL: " + character.getLevel());
+            weigthLabel.setText("WEIGHT: " + weightCheck(character.getWeight()));
+            levelLabel.setText(String.format("LEVEL: %d (%s)", character.getLevel(), levelCheck(character.getLevel())));
             healthLabel.setStyle(fontColor(character.getHealth()));
             hungerLabel.setStyle(fontColor(character.getHunger()));
             cleanlinessLabel.setStyle(fontColor(character.getCleanliness()));
