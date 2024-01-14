@@ -217,7 +217,7 @@ public class Main extends Application {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
                 stage.setScene(scene);
                 statsCounter++;
-                if (statsCounter >= 2) {
+                if (statsCounter >= 1) {
                     updateStats();
                     statsCounter = 0;
                 }
@@ -229,7 +229,11 @@ public class Main extends Application {
         }
         
         private void healthCheck() {
-            if (character.getHealth() <= 1) {
+            if (character.getHunger() <= 0 || character.getHappiness() <= 0 || character.getEnergy() <= 0) {
+                character.setHealth(character.getHealth() - 1);
+            }
+
+            if (character.getHealth() <= 0) {
                 System.out.println("YOUR CHARACTER IS DEAD");
                 InputStream deadImage = getClass().getClassLoader().getResourceAsStream("dead.png");
                 if (deadImage == null) { 
@@ -255,18 +259,18 @@ public class Main extends Application {
             if (character.isSleeping()) {
                 hibernateCounter++;
                 if (hibernateCounter >= 5) {
-                    character.setHunger(character.getHunger() - 1);
-                    character.setCleanliness(character.getCleanliness() - 1);
-                    character.setHappiness(character.getHappiness() - 1);
+                    character.setHunger(Math.max(character.getHunger() - 1, 0));
+                    character.setCleanliness(Math.max(character.getCleanliness() - 1, 0));
+                    character.setHappiness(Math.max(character.getHappiness() - 1, 0));
                     character.setExperience(character.getExperience() + 1);
                     hibernateCounter = 0;
                 }
             }
             else {
-                character.setEnergy(character.getEnergy() - 1);
-                character.setHunger(character.getHunger() - 1);
-                character.setCleanliness(character.getCleanliness() - 1);
-                character.setHappiness(character.getHappiness() - 1);
+                character.setEnergy(Math.max(character.getEnergy() - 1, 0));
+                character.setHunger(Math.max(character.getHunger() - 1, 0));
+                character.setCleanliness(Math.max(character.getCleanliness() - 1, 0));
+                character.setHappiness(Math.max(character.getHappiness() - 1, 0));
                 character.setExperience(character.getExperience() + 1);
             }
             
