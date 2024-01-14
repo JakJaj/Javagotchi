@@ -76,7 +76,7 @@ public class DataBase {
             COLUMN_HEALTH  + ", " + COLUMN_LEVEL + ", " + COLUMN_EXPERIENCE + ", " + COLUMN_AGE + ", " + COLUMN_HAPPINESS +
             ", " + COLUMN_SLEEPING + ", " + COLUMN_LAST_USAGE_TIME + ") " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+    public static final String CLEAR_WHOLE_CHARACTER_TABLE = "DELETE FROM " + TABLE_CHARACTER + " WHERE 0 = 0";
     /**
      * Private constructor so that its impossible to create an instance of this class using the "new" keyword
      * Use getInstance method to get an instance
@@ -222,6 +222,16 @@ public class DataBase {
                 System.out.println("Couldn't reset commit behaviour");
             }
 
+        }
+    }
+    public void resetDatabase() {
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(CLEAR_WHOLE_CHARACTER_TABLE);
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            System.out.println("Something went wrong while reseting a database!" + e.getMessage());
         }
     }
 }
