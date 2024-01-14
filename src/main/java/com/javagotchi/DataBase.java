@@ -224,6 +224,12 @@ public class DataBase {
 
         }
     }
+    /**
+     * Resets the database by clearing the whole character table and committing the changes.
+     * If the connection is not in auto-commit mode, the changes are committed after clearing the table.
+     * Prints a success message if the database is reset successfully.
+     * Prints an error message if an SQLException occurs while resetting the database.
+     */
     public void resetDatabase() {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(CLEAR_WHOLE_CHARACTER_TABLE);

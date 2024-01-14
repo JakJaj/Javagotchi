@@ -243,6 +243,7 @@ public class Main extends Application {
         stage.setOnCloseRequest(event -> {
             if (dataBase.open()){
                 dataBase.insertNewestData(character);
+                System.out.println("Update database using a current stats");
             }
             System.out.println("Javagotchi closed!");
         });
