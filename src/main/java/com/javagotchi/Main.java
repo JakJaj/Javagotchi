@@ -8,11 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,6 +33,7 @@ public class Main extends Application {
     private Timeline timeline;
     private ImageView characterImageView;
     private int statsCounter = 0;
+    private int hibernateCounter = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -113,7 +109,7 @@ public class Main extends Application {
             System.exit(1);
         }
         BackgroundImage backgroundImage = new BackgroundImage(
-                new Image(bg), // Image by pikisuperstar on Freepik "https://www.freepik.com/free-vector/pixel-art-mystical-background_29019077.htm#query=pixel%20art&position=0&from_view=keyword&track=ais&uuid=623d5b35-1c83-4891-bd52-b617b3a15dac"
+                new Image(bg), 
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.DEFAULT,
@@ -210,9 +206,10 @@ public class Main extends Application {
         buttonContainer.layoutYProperty().bind(bottomSection.heightProperty().subtract(buttonContainer.heightProperty()).divide(2));
         bottomSection.getChildren().add(buttonContainer);
 
+        
         stage.setTitle("Javagotchi");
         stage.setScene(scene);
-        stage.setResizable(false); // Block window resizing from users
+        stage.setResizable(false); // Block window resizing from user
         stage.show();
 
         
@@ -223,10 +220,8 @@ public class Main extends Application {
                     updateStats();
                     statsCounter = 0;
                 }
-                
                 updateLabels(); // Refreshing labels every 1 seconds
                 healthCheck();
-                
             }));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
@@ -245,7 +240,6 @@ public class Main extends Application {
                 timeline.stop();
         
                 Platform.runLater(() -> {
-                    
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Game Over");
                     alert.setHeaderText(null);
@@ -257,21 +251,31 @@ public class Main extends Application {
         }
 
         private void updateStats() {
-            character.setHunger(character.getHunger() - 1);
-            character.setCleanliness(character.getCleanliness() - 1);
-            character.setHappiness(character.getHappiness() - 1);
             if (character.isSleeping()) {
-                //character.setEnergy(Math.min(100, character.getEnergy() + 1));
+                hibernateCounter++;
+                if (hibernateCounter >= 5) {
+                    character.setHunger(character.getHunger() - 1);
+                    character.setCleanliness(character.getCleanliness() - 1);
+                    character.setHappiness(character.getHappiness() - 1);
+                    character.setExperience(character.getExperience() + 1);
+                    hibernateCounter = 0;
+                }
             }
             else {
                 character.setEnergy(character.getEnergy() - 1);
+                character.setHunger(character.getHunger() - 1);
+                character.setCleanliness(character.getCleanliness() - 1);
+                character.setHappiness(character.getHappiness() - 1);
+                character.setExperience(character.getExperience() + 1);
             }
-            character.setExperience(character.getExperience() + 1);
+            
             character.setWeight(character.getWeight() - 1);
             if(character.getExperience() >= 5){
                 character.setLevel(character.getLevel() + 1);
                 character.setExperience(0);
             }
+
+            // Image update
             if(character.getLevel() > 2 && character.getLevel() < 5){
                 InputStream midImage = getClass().getClassLoader().getResourceAsStream("mid.png");
                 if (midImage == null) { 
@@ -303,10 +307,6 @@ public class Main extends Application {
             levelLabel.setText("Level: " + character.getLevel());
         
     }
-
-    
-    
-    
 
     public static void main(String[] args) {
         launch();
