@@ -16,17 +16,4 @@ public class MainController {
         }
         dataBase.close();
     }
-    /** Method that is run when a user want to save the game*/
-    @FXML
-    public void save() {
-        if(dataBase.open()){
-            dataBase.insertNewestData(character);
-        }
-        dataBase.close();
-    }
-    /** Method that is run when a user exits the game */
-    @FXML
-    public void exit(){
-        save();
-    }
 }

@@ -230,6 +230,7 @@ public class DataBase {
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
+            System.out.println("Database rested succesfully");
         } catch (SQLException e) {
             System.out.println("Something went wrong while reseting a database!" + e.getMessage());
         }

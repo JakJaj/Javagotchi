@@ -42,7 +42,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         character = Character.getInstance();
-
+        dataBase = DataBase.getInstance();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
 
@@ -239,6 +239,13 @@ public class Main extends Application {
             }));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
+
+        stage.setOnCloseRequest(event -> {
+            if (dataBase.open()){
+                dataBase.insertNewestData(character);
+            }
+            System.out.println("Javagotchi closed!");
+        });
         }
         
         private String causeOfDeath(){
@@ -343,7 +350,6 @@ public class Main extends Application {
         }
 
         private void resetGame() {
-            dataBase = DataBase.getInstance();
             if(dataBase.open()) {
                 dataBase.resetDatabase();
             }
