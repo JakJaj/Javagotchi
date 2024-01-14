@@ -14,9 +14,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.geometry.*; // pos only prob?
 import javafx.util.Duration;
+import lombok.ToString;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalTime;
+import java.util.Optional;
 
 
 public class Main extends Application {
@@ -121,9 +124,9 @@ public class Main extends Application {
 
         centerSection.setBackground(new Background(backgroundImage));
         String characterImageString = "small.png";
-        if (character.getLevel() > 2 && character.getLevel() < 5){
+        if (character.getLevel() > 2 && character.getLevel() <= 5){
             characterImageString = "mid.png";}
-        else if (character.getLevel() >= 5){
+        else if (character.getLevel() > 5){
             characterImageString = "big.png";}
         InputStream characterImage = classloader.getResourceAsStream(characterImageString);
         if (characterImage == null) { 
@@ -133,9 +136,8 @@ public class Main extends Application {
         characterImageView = new ImageView(new Image(characterImage));
         characterImageView.setFitWidth(200);
         characterImageView.setPreserveRatio(true);
-        characterImageView.setLayoutX((centerSection.getPrefWidth() - characterImageView.getFitWidth()) / 2); // Center the small image horizontally
-        characterImageView.setLayoutY((centerSection.getPrefHeight() - characterImageView.getFitHeight()) / 2); // Center the small image vertically
-
+        characterImageView.setLayoutX((centerSection.getPrefWidth() - characterImageView.getFitWidth()) / 2);
+        characterImageView.setLayoutY((centerSection.getPrefHeight() - characterImageView.getFitHeight()) / 2);
         centerSection.getChildren().add(characterImageView);
 
         
@@ -228,9 +230,27 @@ public class Main extends Application {
             timeline.play();
         }
         
+        private String causeOfDeath(){
+            if (character.getHunger() <= 0){
+                return "STARVATION";
+            }
+            else if (character.getHappiness() <= 0){
+                return "MENTAL HEALTH ISSUES";
+            }
+            else if (character.getEnergy() <= 0){
+                return "EXAUSTION";
+            }
+            else{
+                return "UNKNOWN CAUSE";
+            }
+        }
+
         private void healthCheck() {
             if (character.getHunger() <= 0 || character.getHappiness() <= 0 || character.getEnergy() <= 0) {
-                character.setHealth(character.getHealth() - 1);
+                character.setHealth(Math.max(character.getHealth() - 1, 0));
+            }
+            else if (character.getHunger() >= 50 && character.getHappiness() >= 50 && character.getEnergy() >= 50) {
+                character.setHealth(Math.min(character.getHealth() + 1, 100));
             }
 
             if (character.getHealth() <= 0) {
@@ -241,16 +261,28 @@ public class Main extends Application {
                     System.exit(1);
                 }
                 characterImageView.setImage(new Image(deadImage));
+                int score = character.getAge() * 100 + character.getLevel() * 100 + character.getExperience();
                 
-                timeline.stop();
-        
+                timeline.pause();
+                
                 Platform.runLater(() -> {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Game Over");
                     alert.setHeaderText(null);
-                    alert.setContentText("YOUR CHARACTER IS DEAD");
-                    alert.showAndWait();
-                    System.exit(0);
+                    alert.setContentText(String.format("YOUR CHARACTER HAS DIED OF %s :(( \nSCORE: %d \nWould you like to reset the game or exit?", causeOfDeath(), score));
+
+                    ButtonType buttonTypeReset = new ButtonType("Reset");
+                    ButtonType buttonTypeExit = new ButtonType("Exit", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                    alert.getButtonTypes().setAll(buttonTypeReset, buttonTypeExit);
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    resetGame();
+                    if (result.get() == buttonTypeReset){   
+                        timeline.play();
+                    } else {
+                        System.exit(0);
+                    }
                 });
             }
         }
@@ -281,7 +313,7 @@ public class Main extends Application {
             }
 
             // Image update
-            if(character.getLevel() > 2 && character.getLevel() < 5){
+            if(character.getLevel() > 2 && character.getLevel() <= 5){
                 InputStream midImage = getClass().getClassLoader().getResourceAsStream("mid.png");
                 if (midImage == null) { 
                     System.out.println("Error: mid image not found");
@@ -289,7 +321,7 @@ public class Main extends Application {
                 }
                 characterImageView.setImage(new Image(midImage));
             }
-            else if(character.getLevel() >= 5){
+            else if(character.getLevel() > 5){
                 InputStream bigImage = getClass().getClassLoader().getResourceAsStream("big.png");
                 if (bigImage == null) { 
                     System.out.println("Error: big image not found");
@@ -297,6 +329,21 @@ public class Main extends Application {
                 }
                 characterImageView.setImage(new Image(bigImage));
             }
+        }
+
+        private void resetGame() {
+            character.setAge(0);
+            character.setHealth(100);
+            character.setHunger(100);
+            character.setCleanliness(100);
+            character.setHappiness(100);
+            character.setEnergy(100);
+            character.setSleeping(false);
+            character.setExperience(0);
+            character.setWeight(50);
+            character.setLevel(1);
+            characterImageView.setImage(new Image(getClass().getClassLoader().getResourceAsStream("small.png")));
+            updateLabels();
         }
 
         private void updateLabels() {
