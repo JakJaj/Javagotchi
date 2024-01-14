@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.geometry.*; // pos only prob?
@@ -190,6 +191,7 @@ public class Main extends Application {
             System.out.println("CLEAN");
         });
         buttonSleep.setOnAction(e -> {
+            ColorAdjust nightTime = new ColorAdjust();
             if (character.isSleeping()){
                 character.wakeUp();
                 buttonSleep.setText("SLEEP");
@@ -197,6 +199,8 @@ public class Main extends Application {
                 buttonEat.setDisable(character.isSleeping());
                 buttonPlay.setDisable(character.isSleeping());
                 buttonClean.setDisable(character.isSleeping());
+                nightTime.setBrightness(0.0);
+                centerSection.setEffect(nightTime);
             }
             else{
                 character.sleep();
@@ -205,6 +209,8 @@ public class Main extends Application {
                 buttonEat.setDisable(character.isSleeping());
                 buttonPlay.setDisable(character.isSleeping());
                 buttonClean.setDisable(character.isSleeping());
+                nightTime.setBrightness(-0.6);
+                centerSection.setEffect(nightTime);
             }
             updateLabels();
         });
