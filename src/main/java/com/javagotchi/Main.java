@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,8 +32,6 @@ public class Main extends Application {
     private Label cleanlinessLabel;
     private Label happinessLabel;
     private Label energyLabel;
-    private Label sleepLabel;
-    private Label expLabel;
     private Label weigthLabel;
     private Label levelLabel;
     private Timeline timeline;
@@ -52,50 +52,61 @@ public class Main extends Application {
         topSection.setStyle(containerBackground);
 
         // Test labels
-        ageLabel = new Label("Age: " + character.getAge());
-        healthLabel = new Label("Health: " + character.getHealth());
-        hungerLabel = new Label("Hunger: " + character.getHunger());
-        cleanlinessLabel = new Label("Cleanliness: " + character.getCleanliness());
-        happinessLabel = new Label("Happiness: " + character.getHappiness());
-        energyLabel = new Label("Energy: " + character.getEnergy());
-        sleepLabel = new Label("Sleeping?: " + character.isSleeping());
-        expLabel = new Label("Exp: " + character.getExperience());
-        weigthLabel = new Label("Weigth: " + character.getWeight());
-        levelLabel = new Label("Level: " + character.getLevel());
+        ageLabel = new Label("AGE: " + character.getAge());
+        healthLabel = new Label("HEALTH: " + character.getHealth());
+        hungerLabel = new Label("HUNGER: " + character.getHunger());
+        cleanlinessLabel = new Label("CLEANLINESS: " + character.getCleanliness());
+        happinessLabel = new Label("HAPPINESS: " + character.getHappiness());
+        energyLabel = new Label("ENERGY: " + character.getEnergy());
+        weigthLabel = new Label("WEIGHT: " + character.getWeight());
+        levelLabel = new Label("LEVEL: " + character.getLevel());
 
         String labelStyle = "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
-        ageLabel.setLayoutX(20);
-        ageLabel.setLayoutY(50);
-        ageLabel.setStyle(labelStyle);
-        healthLabel.setLayoutX(20);
-        healthLabel.setLayoutY(80);
+        healthLabel.setLayoutX(660);
+        healthLabel.setLayoutY(10);
         healthLabel.setStyle(labelStyle);
-        hungerLabel.setLayoutX(20);
-        hungerLabel.setLayoutY(110);
-        hungerLabel.setStyle(labelStyle);
-        cleanlinessLabel.setLayoutX(150);
-        cleanlinessLabel.setLayoutY(20);
-        cleanlinessLabel.setStyle(labelStyle);
-        happinessLabel.setLayoutX(150);
-        happinessLabel.setLayoutY(50);
-        happinessLabel.setStyle(labelStyle);
-        energyLabel.setLayoutX(150);
-        energyLabel.setLayoutY(80);
-        energyLabel.setStyle(labelStyle);
-        sleepLabel.setLayoutX(280);
-        sleepLabel.setLayoutY(20);
-        sleepLabel.setStyle(labelStyle);
-        expLabel.setLayoutX(280);
-        expLabel.setLayoutY(50);
-        expLabel.setStyle(labelStyle);
-        weigthLabel.setLayoutX(280);
-        weigthLabel.setLayoutY(80);
-        weigthLabel.setStyle(labelStyle);
-        levelLabel.setLayoutX(280);
-        levelLabel.setLayoutY(110);
-        levelLabel.setStyle(labelStyle);
+        healthLabel.setFont(Font.font("Helvetica", 18));
 
-        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, sleepLabel, expLabel, weigthLabel, levelLabel);
+        hungerLabel.setLayoutX(660);
+        hungerLabel.setLayoutY(40);
+        hungerLabel.setStyle(labelStyle);
+        hungerLabel.setFont(Font.font("Helvetica", 18));
+
+        energyLabel.setLayoutX(660);
+        energyLabel.setLayoutY(70);
+        energyLabel.setStyle(labelStyle);
+        energyLabel.setFont(Font.font("Helvetica", 18));
+
+        levelLabel.setLayoutX(660);
+        levelLabel.setLayoutY(100);
+        levelLabel.setStyle(labelStyle);
+        levelLabel.setFont(Font.font("Helvetica", 18));
+
+
+        cleanlinessLabel.setLayoutX(30);
+        cleanlinessLabel.setLayoutY(10);
+        cleanlinessLabel.setStyle(labelStyle);
+        cleanlinessLabel.setFont(Font.font("Helvetica", 18));
+
+        happinessLabel.setLayoutX(30);
+        happinessLabel.setLayoutY(40);
+        happinessLabel.setStyle(labelStyle);
+        happinessLabel.setFont(Font.font("Helvetica", 18));
+
+        weigthLabel.setLayoutX(30);
+        weigthLabel.setLayoutY(70);
+        weigthLabel.setStyle(labelStyle);
+        weigthLabel.setFont(Font.font("Helvetica", 18));
+
+        ageLabel.setLayoutX(30);
+        ageLabel.setLayoutY(100);
+        ageLabel.setStyle(labelStyle);
+        ageLabel.setFont(Font.font("Helvetica", 26));
+        ageLabel.setFont(Font.font("Helvetica", 18));
+
+        
+
+        topSection.getChildren().addAll(ageLabel, healthLabel, hungerLabel, cleanlinessLabel, happinessLabel, energyLabel, weigthLabel, levelLabel);
         // Top section needs some cleaning up
 
         Pane bottomSection = new Pane();
@@ -346,18 +357,36 @@ public class Main extends Application {
             updateLabels();
         }
 
+        private String fontColor(int value) {
+            if (value <= 20) {
+                return "-fx-text-fill: #ff6969; -fx-font-family: 'Helvetica';";
+            } 
+            else if (value <= 40) {
+                return "-fx-text-fill: #f2eba7; -fx-font-family: 'Helvetica';";
+            }
+            else {
+                return "-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';";
+            }
+        }
+
         private void updateLabels() {
-            ageLabel.setText("Age: " + character.getAge());
-            healthLabel.setText("Health: " + character.getHealth());
-            hungerLabel.setText("Hunger: " + character.getHunger());
-            cleanlinessLabel.setText("Cleanliness: " + character.getCleanliness());
-            happinessLabel.setText("Happiness: " + character.getHappiness());
-            energyLabel.setText("Energy: " + character.getEnergy());
-            sleepLabel.setText("Sleeping?: " + character.isSleeping());
-            expLabel.setText("Exp: " + character.getExperience());
-            weigthLabel.setText("Weigth: " + character.getWeight());
-            levelLabel.setText("Level: " + character.getLevel());
-        
+            ageLabel.setText("AGE: " + character.getAge());
+            healthLabel.setText("HEALTH: " + character.getHealth());
+            hungerLabel.setText("HUNGER: " + character.getHunger());
+            cleanlinessLabel.setText("CLEANLINESS: " + character.getCleanliness());
+            happinessLabel.setText("HAPPINESS: " + character.getHappiness());
+            energyLabel.setText("ENERGY: " + character.getEnergy());
+            weigthLabel.setText("WEIGHT: " + character.getWeight());
+            levelLabel.setText("LEVEL: " + character.getLevel());
+            healthLabel.setStyle(fontColor(character.getHealth()));
+            hungerLabel.setStyle(fontColor(character.getHunger()));
+            cleanlinessLabel.setStyle(fontColor(character.getCleanliness()));
+            happinessLabel.setStyle(fontColor(character.getHappiness()));
+            energyLabel.setStyle(fontColor(character.getEnergy()));
+            if (character.getWeight() >= 500 || character.getWeight() <= 20) {
+                weigthLabel.setStyle("-fx-text-fill: #ff6969; -fx-font-family: 'Helvetica';");
+            } else {
+                weigthLabel.setStyle("-fx-text-fill: #f2f2f2; -fx-font-family: 'Helvetica';");}
     }
     /**
      * Displays the Brick Breaker game window.
