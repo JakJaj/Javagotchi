@@ -301,7 +301,7 @@ public class Main extends Application {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
                 stage.setScene(scene);
                 statsCounter++;
-                if (statsCounter >= 1) {
+                if (statsCounter >= 10) {
                     updateStats();
                     statsCounter = 0;
                 }
@@ -405,7 +405,7 @@ public class Main extends Application {
                     weightCounter = 0;
                 }
             }
-            if(character.getExperience() >= 5){
+            if(character.getExperience() >= 100){
                 character.setLevel(character.getLevel() + 1);
                 character.setExperience(0);
             }
@@ -439,7 +439,7 @@ public class Main extends Application {
         }
 
         private String fontColor(int value) {
-            if (value <= 20)
+            if (value <= 10)
                 return "-fx-text-fill: #ff6969; -fx-font-family: 'Helvetica';";
             else if (value <= 40)
                 return "-fx-text-fill: #f2eba7; -fx-font-family: 'Helvetica';";
