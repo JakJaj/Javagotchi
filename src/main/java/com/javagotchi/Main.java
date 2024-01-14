@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.geometry.*; // pos only prob?
@@ -257,6 +258,19 @@ public class Main extends Application {
         stage.setResizable(false); // Block window resizing from user
         stage.show();
 
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.P) {
+                if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                    mediaPlayer.pause();
+                } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                    mediaPlayer.play();
+                }
+            }
+            else if (event.getCode() == KeyCode.ESCAPE) {
+                // Database save here
+                System.exit(0);
+            }
+        });
         
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
                 stage.setScene(scene);
