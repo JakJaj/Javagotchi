@@ -14,14 +14,16 @@ import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.geometry.*; // pos only prob?
 import javafx.util.Duration;
 import lombok.ToString;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.net.URL;
 
 
 public class Main extends Application {
@@ -241,6 +243,14 @@ public class Main extends Application {
         buttonContainer.layoutYProperty().bind(bottomSection.heightProperty().subtract(buttonContainer.heightProperty()).divide(2));
         bottomSection.getChildren().add(buttonContainer);
 
+        String bgmusicFile = "/bgmusic.mp3";
+
+        Media sound = new Media(getClass().getResource(bgmusicFile).toExternalForm());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.setVolume(0.1);
+        mediaPlayer.play();
+        
         
         stage.setTitle("Javagotchi");
         stage.setScene(scene);
