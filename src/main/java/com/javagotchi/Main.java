@@ -42,6 +42,7 @@ public class Main extends Application {
     private ImageView characterImageView;
     private int statsCounter = 0;
     private int hibernateCounter = 0;
+    private int weightCounter = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -342,7 +343,8 @@ public class Main extends Application {
                 });
             }
         }
-  
+
+
         private void updateStats() {
             if (character.isSleeping()) {
                 hibernateCounter++;
@@ -361,8 +363,15 @@ public class Main extends Application {
                 character.setHappiness(Math.max(character.getHappiness() - 1, 0));
                 character.setExperience(character.getExperience() + 1);
             }
-            
-            character.setWeight(character.getWeight() - 1);
+            if (character.getHunger() <= 20){
+                character.setWeight(character.getWeight() - 1);
+            }else{
+                weightCounter++;
+                if (weightCounter >= 5){
+                    character.setWeight(character.getWeight() - 1);
+                    weightCounter = 0;
+                }
+            }
             if(character.getExperience() >= 5){
                 character.setLevel(character.getLevel() + 1);
                 character.setExperience(0);
