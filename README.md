@@ -27,10 +27,7 @@ Follow these steps to get the Tamagotchi Clone up and running on your machine:
     ```
 
 3. **Compile and Run:**
-    ```bash
-    javac Main.java
-    java Main
-    ```
+    Open the project in your IDE and run the Main.java file
 
 4. **Interact with Your Tamagotchi:**
     - Follow the on-screen instructions to take care of your virtual pet.
